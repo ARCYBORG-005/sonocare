@@ -1,0 +1,245 @@
+/* Lead Management Module Custom Styles — Sonocare Healthcare CRM */
+
+.lead-management-page {
+  padding: 0.5rem;
+}
+
+/* Lead Status Badges */
+.lead-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 50rem;
+  text-transform: capitalize;
+  letter-spacing: 0.3px;
+}
+
+.lead-status-badge.open {
+  background-color: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+.lead-status-badge.in-progress {
+  background-color: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde047;
+}
+
+.lead-status-badge.high-confirm {
+  background-color: #e0e7ff;
+  color: #4338ca;
+  border: 1px solid #c7d2fe;
+}
+
+.lead-status-badge.won {
+  background-color: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+.lead-status-badge.drop {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+}
+
+/* Action Button Variants for Table Columns */
+.lead-btn-follows {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #2E3192;
+  background-color: #eef2ff;
+  border: 1px solid #c7d2fe;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.lead-btn-follows:hover {
+  background-color: #2E3192;
+  color: #ffffff;
+}
+
+.lead-btn-demo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #0284c7;
+  background-color: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.lead-btn-demo:hover {
+  background-color: #0284c7;
+  color: #ffffff;
+}
+
+.lead-btn-pi {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #7e22ce;
+  background-color: #faf5ff;
+  border: 1px solid #e9d5ff;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.lead-btn-pi:hover:not(:disabled) {
+  background-color: #7e22ce;
+  color: #ffffff;
+}
+
+.lead-btn-pi:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.lead-btn-drop {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #dc2626;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.lead-btn-drop:hover {
+  background-color: #dc2626;
+  color: #ffffff;
+}
+
+.lead-btn-reopen {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #16a34a;
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.lead-btn-reopen:hover {
+  background-color: #16a34a;
+  color: #ffffff;
+}
+
+/* Follow-up Timeline in Modal */
+.lead-history-timeline {
+  position: relative;
+  padding-left: 1.5rem;
+  border-left: 2px solid #e2e8f0;
+}
+
+.lead-history-item {
+  position: relative;
+  margin-bottom: 1.25rem;
+}
+
+.lead-history-item::before {
+  content: '';
+  position: absolute;
+  left: -1.95rem;
+  top: 0.25rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #2E3192;
+  border: 2px solid #ffffff;
+}
+
+.lead-btn-reopen-view {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #0d6efd;
+  background-color: #e7f1ff;
+  border: 1px solid #9ec5fe;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.lead-btn-reopen-view:hover {
+  background-color: #0d6efd;
+  color: #ffffff;
+}
+
+@media (max-width: 991px) {
+  .lead-management-page {
+    padding: 0.25rem;
+  }
+  .category-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .category-add-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .category-card-header {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 0.75rem;
+  }
+  .category-search-wrapper {
+    max-width: 100% !important;
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .lead-btn-follows,
+  .lead-btn-demo,
+  .lead-btn-pi,
+  .lead-btn-drop,
+  .lead-btn-reopen,
+  .lead-btn-reopen-view {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.7rem;
+  }
+  .card-body {
+    padding: 0.85rem !important;
+  }
+  .category-page-title {
+    font-size: 1.25rem !important;
+  }
+}
+
+

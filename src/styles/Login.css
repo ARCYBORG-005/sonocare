@@ -1,0 +1,207 @@
+/* ==========================================================================
+   Full Edge-to-Edge Split Screen Login Page Styling
+   Strictly Non-Scrollable 100vh Fixed Layout
+   ========================================================================== */
+
+:root {
+  --ml-primary: #2E3192;
+  --ml-primary-hover: #212470;
+  --ml-dark-card-bg: #1b2a4a;
+  --ml-gold: #f59e0b;
+  --ml-gold-hover: #d97706;
+}
+
+/* Full Viewport Container - Strictly Fixed 100vh with NO Scrolling */
+.ml-login-viewport {
+  height: 100vh !important;
+  width: 100vw !important;
+  overflow: hidden !important;
+  background-color: #ffffff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* Left Image Column - Full 100vh height edge-to-edge */
+.ml-left-hero-col {
+  padding: 0 !important;
+  height: 100vh !important;
+  position: relative;
+  overflow: hidden !important;
+  background-color: #0f172a;
+}
+
+.ml-full-left-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.ml-left-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 50%);
+  pointer-events: none;
+}
+
+/* Right Form Column - Fixed 100vh, Centered Card, Strictly NO Overflow / NO Scrollbar */
+.ml-right-form-container {
+  height: 100vh !important;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 1.5rem;
+  overflow: hidden !important;
+  position: relative;
+}
+
+/* Dark Floating Login Card (Compact & Perfectly Proportioned for 100vh) */
+.ml-dark-card {
+  background-color: var(--ml-dark-card-bg);
+  color: #ffffff;
+  border-radius: 1.25rem;
+  padding: 2.25rem 2rem;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 0 auto;
+}
+
+/* Header Text */
+.ml-card-title {
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 1.75rem;
+  text-align: center;
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.02em;
+}
+
+.ml-card-subtitle {
+  color: #94a3b8;
+  font-size: 0.875rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Input Field Group */
+.ml-field-group {
+  margin-bottom: 1rem;
+}
+
+.ml-field-label {
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+  display: block;
+}
+
+.ml-req-star {
+  color: #ef4444;
+  margin-left: 2px;
+}
+
+/* Clean White Input Box */
+.ml-white-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ml-white-input {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 0.55rem !important;
+  padding: 0.7rem 0.9rem !important;
+  font-size: 0.925rem !important;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.ml-white-input::placeholder {
+  color: #94a3b8 !important;
+}
+
+.ml-white-input:focus {
+  border-color: var(--ml-primary) !important;
+  box-shadow: 0 0 0 3px rgba(46, 49, 146, 0.3) !important;
+  outline: none !important;
+}
+
+/* Password Eye Toggle Icon */
+.ml-eye-btn {
+  position: absolute;
+  right: 0.65rem;
+  background: transparent;
+  border: none;
+  color: #475569;
+  cursor: pointer;
+  padding: 0.25rem 0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.ml-eye-btn:hover {
+  color: #0f172a;
+}
+
+/* Forgot Password Link */
+.ml-gold-link {
+  color: var(--ml-gold);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.ml-gold-link:hover {
+  color: #fbbf24;
+  text-decoration: underline;
+}
+
+/* Primary Action Button (#2E3192) */
+.btn-ml-primary-action {
+  background-color: var(--ml-primary) !important;
+  border-color: var(--ml-primary) !important;
+  color: #ffffff !important;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.55rem;
+  width: 100%;
+  box-shadow: 0 4px 14px rgba(46, 49, 146, 0.35);
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-ml-primary-action:hover {
+  background-color: var(--ml-primary-hover) !important;
+  border-color: var(--ml-primary-hover) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(46, 49, 146, 0.45);
+}
+
+/* Responsive adjustments for mobile screen */
+@media (max-width: 767.98px) {
+  .ml-right-form-container {
+    height: 100vh !important;
+    padding: 1.25rem 1rem;
+    background-color: #0f172a;
+  }
+  .ml-dark-card {
+    padding: 1.75rem 1.25rem;
+    box-shadow: none;
+  }
+}

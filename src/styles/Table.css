@@ -1,0 +1,309 @@
+/* Sonocare Responsive Data Table Styling */
+
+.sonocare-table-container {
+  width: 100%;
+  margin-bottom: 1rem;
+  background-color: var(--bs-body-bg, #ffffff);
+  border-radius: 0.5rem;
+}
+
+/* Horizontal Responsive Scroll Container */
+.sonocare-table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 0.375rem;
+  scrollbar-width: thin;
+}
+
+/* Scrollbar aesthetic touches */
+.sonocare-table-responsive::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.sonocare-table-responsive::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+.sonocare-table-responsive::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.sonocare-table-responsive::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+/* Base Table Styling */
+.sonocare-table {
+  width: 100%;
+  margin-bottom: 0;
+  vertical-align: middle;
+}
+
+.sonocare-table th {
+  font-weight: 600;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.sonocare-table th.sortable {
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.sonocare-table th.sortable:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.sonocare-table-row-clickable {
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.sonocare-table-row-clickable:hover {
+  background-color: rgba(13, 110, 253, 0.05) !important;
+}
+
+/* Sort Icon Styling */
+.sonocare-sort-icon {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.35rem;
+  font-size: 0.75rem;
+  opacity: 0.4;
+  transition: opacity 0.15s ease-in-out;
+}
+
+.sonocare-sort-icon.active {
+  opacity: 1;
+  color: var(--bs-primary, #0d6efd);
+}
+
+/* Skeleton Loading Animation */
+.sonocare-skeleton {
+  display: inline-block;
+  height: 1.1em;
+  width: 80%;
+  background: linear-gradient(90deg, #e9ecef 25%, #f8f9fa 50%, #e9ecef 75%);
+  background-size: 200% 100%;
+  animation: sonocare-skeleton-shimmer 1.5s infinite;
+  border-radius: 0.25rem;
+}
+
+@keyframes sonocare-skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Empty State Styling */
+.sonocare-empty-state {
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.sonocare-empty-icon {
+  font-size: 2.5rem;
+  color: #6c757d;
+  margin-bottom: 0.75rem;
+}
+
+/* Table Toolbar / Controls Header */
+.sonocare-table-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background-color: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: none;
+  border-top-left-radius: 0.375rem;
+  border-top-right-radius: 0.375rem;
+}
+
+/* Search input container */
+.sonocare-search-box {
+  position: relative;
+  min-width: 220px;
+  max-width: 320px;
+  flex: 1;
+}
+
+.sonocare-search-box .bi-search {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+  pointer-events: none;
+}
+
+.sonocare-search-input {
+  padding-left: 2.25rem !important;
+}
+
+/* Footer / Pagination Controls */
+.sonocare-table-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  padding: 0.75rem 1rem;
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-top: none;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
+
+.sonocare-table-info {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.sonocare-table-info-highlight {
+  font-weight: 700;
+  color: #2E3192; /* MEDIALOGIC Primary Blue */
+}
+
+/* Pagination Controls Right Wrapper */
+.sonocare-pagination-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+}
+
+/* Rows Per Page Selector */
+.sonocare-rows-per-page {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #475569;
+}
+
+.sonocare-page-size-select {
+  width: auto !important;
+  min-width: 65px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.85rem;
+  border-radius: 0.375rem;
+  border: 1px solid #cbd5e1;
+  background-color: #f8fafc;
+  cursor: pointer;
+}
+
+/* Page Navigation Controls Container */
+.sonocare-pagination-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* Icon Buttons « ‹ › » */
+.sonocare-pag-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.375rem;
+  background-color: #f8fafc;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.sonocare-pag-btn:hover:not(:disabled) {
+  background-color: #e2e8f0;
+  border-color: #cbd5e1;
+  color: #2E3192;
+}
+
+.sonocare-pag-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background-color: #f8fafc;
+  border-color: #f1f5f9;
+  color: #cbd5e1;
+}
+
+/* Current Page / Total Pages Display */
+.sonocare-page-counter {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  user-select: none;
+}
+
+.sonocare-page-counter .current-page-num {
+  color: #2E3192; /* MEDIALOGIC Primary Blue */
+}
+
+.sonocare-page-counter .page-separator {
+  color: #2E3192;
+  font-weight: 700;
+}
+
+.sonocare-page-counter .total-pages-num {
+  color: #2E3192;
+}
+
+/* Mobile Viewport Responsiveness (320px, 375px, 414px) */
+@media (max-width: 575.98px) {
+  .sonocare-table-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sonocare-search-box {
+    max-width: 100%;
+  }
+
+  .sonocare-table-footer {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.75rem;
+    padding: 0.875rem 0.75rem;
+  }
+
+  .sonocare-pagination-controls {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.65rem;
+    width: 100%;
+  }
+
+  .sonocare-rows-per-page {
+    justify-content: center;
+  }
+
+  .sonocare-pagination-nav {
+    justify-content: center;
+    width: 100%;
+    gap: 0.25rem;
+  }
+
+  .sonocare-pag-btn {
+    width: 30px;
+    height: 30px;
+  }
+}

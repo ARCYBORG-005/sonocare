@@ -1,0 +1,241 @@
+/* ==========================================================================
+   Category Master Styling - Application Standard Typography & Theme
+   Inherits font-family, sizes, weights, and styling from shared system CSS.
+   ========================================================================== */
+
+.category-master-page {
+  font-family: inherit;
+  color: var(--crm-text-dark, #0F172A);
+}
+
+/* Top Header Bar */
+.category-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.category-page-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Page Title: 1.5rem (24px), font-weight: 700 (App Standard h1.h3) */
+.category-page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--crm-text-dark, #0F172A);
+  margin: 0;
+}
+
+/* Primary Action Button */
+.category-add-btn {
+  background-color: var(--crm-primary, #2E3192) !important;
+  color: #ffffff !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  padding: 0.6rem 1.25rem !important;
+  border-radius: 0.5rem !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(46, 49, 146, 0.2) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  transition: all 0.2s ease !important;
+}
+
+.category-add-btn:hover {
+  background-color: var(--crm-primary-hover, #212470) !important;
+}
+
+/* Main Card Container */
+.category-card {
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  border: 1px solid var(--crm-border, #E2E8F0);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+/* Card Header */
+.category-card-header {
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--crm-border, #E2E8F0);
+  flex-wrap: wrap;
+  gap: 1rem;
+  background-color: #ffffff;
+}
+
+.category-card-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--crm-text-dark, #0F172A);
+  margin: 0;
+}
+
+/* Pill Search Box */
+.category-search-wrapper {
+  position: relative;
+  width: 320px;
+  max-width: 100%;
+}
+
+.category-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #EAB308;
+  pointer-events: none;
+}
+
+.category-search-input {
+  width: 100%;
+  padding: 0.5rem 1rem 0.5rem 2.5rem;
+  border-radius: 50rem !important;
+  border: 1px solid #CBD5E1;
+  background-color: #F8FAFC;
+  font-size: 0.875rem;
+  color: var(--crm-text-dark, #0F172A);
+  transition: all 0.2s ease;
+}
+
+.category-search-input:focus {
+  background-color: #ffffff;
+  border-color: var(--crm-primary, #2E3192);
+  box-shadow: 0 0 0 3px rgba(46, 49, 146, 0.12);
+  outline: none;
+}
+
+/* Table Styling */
+.category-table-wrapper {
+  padding: 1rem 1.25rem;
+}
+
+.category-custom-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.category-custom-table thead tr th {
+  background-color: #1F325C !important;
+  color: #ffffff !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0.85rem 1rem !important;
+  border: none !important;
+}
+
+.category-custom-table thead tr th:first-child {
+  border-top-left-radius: 0.375rem;
+}
+
+.category-custom-table thead tr th:last-child {
+  border-top-right-radius: 0.375rem;
+}
+
+.category-custom-table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.category-custom-table tbody tr:nth-child(even) {
+  background-color: #FAFAFA;
+}
+
+.category-custom-table tbody tr:hover {
+  background-color: #F1F5F9;
+}
+
+.category-custom-table tbody td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #EEF2F6;
+  vertical-align: middle;
+  font-size: 0.875rem;
+}
+
+.category-name-text {
+  font-weight: 600;
+  color: var(--crm-text-dark, #0F172A);
+  font-size: 0.875rem;
+}
+
+.category-desc-text {
+  color: var(--crm-text-muted, #64748B);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* Action Icon Buttons */
+.category-actions-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.4rem;
+}
+
+.category-action-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 0.375rem;
+  border: 1px solid #D1D5DB;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #4B5563;
+}
+
+/* Edit Button (Green) */
+.category-action-btn.edit-btn {
+  color: #16A34A;
+  background-color: #F0FDF4;
+  border-color: #BBF7D0;
+}
+
+.category-action-btn.edit-btn:hover {
+  background-color: #DCFCE7;
+  border-color: #86EFAC;
+  color: #15803D;
+  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.2);
+}
+
+/* Delete Button (Red) */
+.category-action-btn.delete-btn {
+  color: #DC2626;
+  background-color: #FEF2F2;
+  border-color: #FECACA;
+}
+
+.category-action-btn.delete-btn:hover {
+  background-color: #FEE2E2;
+  border-color: #FCA5A5;
+  color: #B91C1C;
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.2);
+}
+
+/* View Button (Blue) */
+.category-action-btn.view-btn {
+  color: #2563EB;
+  background-color: #EFF6FF;
+  border-color: #BFDBFE;
+}
+
+.category-action-btn.view-btn:hover {
+  background-color: #DBEAFE;
+  border-color: #93C5FD;
+  color: #1D4ED8;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.2);
+}

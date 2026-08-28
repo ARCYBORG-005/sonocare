@@ -1,0 +1,426 @@
+/* ==========================================================================
+   MEDIALOGIC B2B Healthcare CRM - Layout Styling
+   Fixed Header (76px), Fixed Collapsible Sidebar, & Independent Content Area
+   Fully Responsive: Mobile (<768px), Tablet (768px-991px), Desktop (>=992px)
+   ========================================================================== */
+
+:root {
+  --crm-header-height: 76px;
+  --crm-sidebar-width: 250px;
+  --crm-sidebar-collapsed-width: 72px;
+  --crm-primary: #2E3192;
+  --crm-primary-hover: #212470;
+  --crm-primary-light: rgba(46, 49, 146, 0.08);
+  --crm-bg: #f8fafc;
+  --crm-border: #e2e8f0;
+  --crm-text-dark: #0f172a;
+  --crm-text-muted: #64748b;
+  --crm-sidebar-bg: #ffffff;
+  --crm-sidebar-hover: #f1f5f9;
+  --crm-header-bg: #ffffff;
+}
+
+/* Base Wrapper */
+.crm-layout-wrapper {
+  min-height: 100vh;
+  background-color: var(--crm-bg);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--crm-text-dark);
+}
+
+/* ==========================================================================
+   1. FIXED HEADER (76px Height)
+   ========================================================================== */
+.crm-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--crm-header-height);
+  background-color: var(--crm-header-bg);
+  border-bottom: 1px solid var(--crm-border);
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.05);
+  z-index: 1080;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Header Left Brand & Toggle Area */
+.crm-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.crm-toggle-btn {
+  background: transparent;
+  border: 1px solid var(--crm-border);
+  color: var(--crm-text-dark);
+  width: 40px;
+  height: 40px;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.crm-toggle-btn:hover {
+  background-color: var(--crm-primary-light);
+  color: var(--crm-primary);
+  border-color: var(--crm-primary);
+}
+
+/* Medialogic Logo in Header */
+.crm-header-logo-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.crm-header-logo {
+  height: 46px;
+  width: auto;
+  max-width: 210px;
+  object-fit: contain;
+}
+
+/* Header Right User Profile & Logout Area */
+.crm-header-right {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.crm-user-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 50rem;
+  background-color: #f8fafc;
+  border: 1px solid var(--crm-border);
+}
+
+.crm-user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--crm-primary);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.crm-user-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.crm-user-name {
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: var(--crm-text-dark);
+}
+
+.crm-user-role {
+  font-size: 0.75rem;
+  color: var(--crm-text-muted);
+}
+
+/* Header Logout Button */
+.crm-logout-btn {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.crm-logout-btn:hover {
+  background-color: #dc2626;
+  color: #ffffff;
+  border-color: #dc2626;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25);
+}
+
+/* ==========================================================================
+   2. FIXED VERTICAL SIDEBAR
+   ========================================================================== */
+.crm-sidebar {
+  position: fixed;
+  top: var(--crm-header-height);
+  bottom: 0;
+  left: 0;
+  width: var(--crm-sidebar-width);
+  background-color: var(--crm-sidebar-bg);
+  border-right: 1px solid var(--crm-border);
+  z-index: 1030;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s ease;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Collapsed Sidebar Width */
+.crm-sidebar.collapsed {
+  width: var(--crm-sidebar-collapsed-width);
+}
+
+/* Custom Scrollbar for Sidebar */
+.crm-sidebar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.crm-sidebar::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 10px;
+}
+
+/* Sidebar Nav List */
+.crm-nav-list {
+  list-style: none;
+  padding: 1rem 0.75rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.crm-nav-item {
+  position: relative;
+}
+
+/* Nav Link Styling */
+.crm-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.7rem 0.85rem;
+  color: #475569;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  user-select: none;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+}
+
+.crm-nav-link:hover {
+  background-color: var(--crm-sidebar-hover);
+  color: var(--crm-primary);
+}
+
+/* Active Highlighted Navigation Item */
+.crm-nav-link.active {
+  background-color: var(--crm-primary);
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(46, 49, 146, 0.25);
+}
+
+.crm-nav-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.crm-nav-text {
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity 0.2s ease;
+}
+
+.crm-sidebar.collapsed .crm-nav-text {
+  display: none;
+}
+
+.crm-chevron-icon {
+  margin-left: auto;
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+}
+
+.crm-sidebar.collapsed .crm-chevron-icon {
+  display: none;
+}
+
+/* Submenu / Masters Accordion */
+.crm-submenu {
+  list-style: none;
+  padding: 0.35rem 0 0.35rem 1.75rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.crm-sidebar.collapsed .crm-submenu {
+  display: none;
+}
+
+.crm-submenu-link {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.5rem 0.75rem;
+  color: #64748b;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-radius: 0.4rem;
+  transition: all 0.2s ease;
+}
+
+.crm-submenu-link:hover {
+  background-color: var(--crm-sidebar-hover);
+  color: var(--crm-primary);
+}
+
+.crm-submenu-link.active {
+  color: var(--crm-primary);
+  font-weight: 700;
+  background-color: var(--crm-primary-light);
+}
+
+/* ==========================================================================
+   3. INDEPENDENT MAIN CONTENT AREA
+   ========================================================================== */
+.crm-main-content {
+  margin-top: var(--crm-header-height);
+  margin-left: var(--crm-sidebar-width);
+  min-height: calc(100vh - var(--crm-header-height));
+  padding: 1.5rem;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+}
+
+.crm-main-content.collapsed {
+  margin-left: var(--crm-sidebar-collapsed-width);
+}
+
+/* Mobile Sidebar Backdrop Overlay */
+.crm-sidebar-backdrop {
+  display: none;
+}
+
+/* ==========================================================================
+   4. RESPONSIVE BREAKPOINTS (Mobile, Tablet, Desktop)
+   ========================================================================== */
+
+/* Tablet Viewport (768px to 991.98px) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .crm-header {
+    padding: 0 1rem;
+  }
+  .crm-header-logo {
+    height: 38px;
+  }
+  /* Default tablet behavior: collapsed sidebar */
+  .crm-sidebar {
+    width: var(--crm-sidebar-collapsed-width);
+  }
+  .crm-sidebar.mobile-open {
+    width: var(--crm-sidebar-width);
+  }
+  .crm-main-content {
+    margin-left: var(--crm-sidebar-collapsed-width);
+    padding: 1.25rem;
+  }
+  .crm-main-content.expanded {
+    margin-left: var(--crm-sidebar-width);
+  }
+}
+
+/* Mobile Viewport (<768px) */
+@media (max-width: 767.98px) {
+  .crm-header {
+    padding: 0 0.85rem;
+    height: 68px;
+  }
+  :root {
+    --crm-header-height: 68px;
+  }
+  .crm-header-logo {
+    height: 34px;
+    max-width: 140px;
+  }
+  .crm-user-info {
+    display: none; /* Hide full text name on small mobile, show avatar */
+  }
+  .crm-user-profile {
+    padding: 0.2rem;
+    background: transparent;
+    border: none;
+  }
+  .crm-logout-btn {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+  }
+  .crm-logout-btn span {
+    display: none; /* Hide text "Logout", show LogOut icon */
+  }
+
+  /* Mobile Drawer Sidebar */
+  .crm-sidebar {
+    top: 68px;
+    width: 260px !important;
+    transform: translateX(-100%);
+    box-shadow: 4px 0 20px rgba(15, 23, 42, 0.15);
+  }
+
+  .crm-sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  .crm-sidebar.collapsed .crm-nav-text {
+    display: block !important;
+  }
+
+  .crm-sidebar.collapsed .crm-chevron-icon {
+    display: block !important;
+  }
+
+  /* Mobile Content takes 100% width */
+  .crm-main-content,
+  .crm-main-content.collapsed,
+  .crm-main-content.expanded {
+    margin-left: 0 !important;
+    padding: 1rem;
+  }
+
+  /* Mobile Overlay Backdrop */
+  .crm-sidebar-backdrop.active {
+    display: block;
+    position: fixed;
+    top: 68px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 1020;
+  }
+}

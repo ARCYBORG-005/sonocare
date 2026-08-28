@@ -1,0 +1,132 @@
+/* ==========================================================================
+   ORDER FULFILMENT & KIT GENERATION MODULE STYLES
+   Follows Sonocare CRM Design System (#2E3192 Primary Brand Color)
+   ========================================================================== */
+
+.fulfilment-page {
+  font-family: inherit;
+  color: #1f2937;
+}
+
+/* 2-Column Grid Container for Generate Kits Workspace */
+.kit-generation-grid-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+@media (min-width: 992px) {
+  .kit-generation-grid-container {
+    grid-template-columns: 1fr 1fr; /* 2 equal columns on desktop */
+    align-items: start;
+  }
+}
+
+/* Card Wrappers */
+.fulfilment-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+}
+
+/* Status Select in Table */
+.fulfilment-status-badge {
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 0.35em 0.75em;
+  border-radius: 6px;
+}
+
+/* Responsive Table Wrapper */
+.fulfilment-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Product Line Item Box in Kit Generation Workspace */
+.kit-product-item-card {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  margin-bottom: 1.25rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kit-product-item-card:hover {
+  border-color: #94a3b8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.kit-product-header {
+  background-color: #f8fafc;
+  padding: 0.85rem 1.25rem;
+  border-bottom: 1px solid #e2e8f0;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.kit-details-card-wrapper {
+  background-color: #ffffff;
+  border: 1px solid #2e3192;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+  box-shadow: 0 2px 6px rgba(46, 49, 146, 0.08);
+}
+
+.license-details-card-wrapper {
+  background-color: #f0fdf4;
+  border: 1px solid #16a34a;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.08);
+}
+
+/* Form Section Card Headers */
+.section-card-title-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* Action Toolbar */
+.fulfilment-action-toolbar {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  background-color: #ffffff;
+  border-top: 1px solid #e2e8f0;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 768px) {
+  .kit-product-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .fulfilment-action-toolbar {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .fulfilment-action-toolbar button {
+    width: 100%;
+  }
+}

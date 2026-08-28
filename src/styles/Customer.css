@@ -1,0 +1,19 @@
+/* ==========================================================================
+   Customer Master Styling - Dedicated System Stylesheet & Responsive Rules
+   ========================================================================== */
+
+.customer-master-page {
+  font-family: inherit;
+  color: var(--crm-text-dark, #0F172A);
+}
+
+/* Contact Card Header Responsive Layout Fix for Narrow Viewports (320px - 414px) */
+.customer-master-page .border.rounded .d-flex.justify-content-between.border-bottom {
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.customer-master-page .border.rounded .d-flex.justify-content-between.border-bottom > div:first-child {
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
