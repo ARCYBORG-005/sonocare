@@ -28,7 +28,7 @@ import '../../styles/Category.css';
 import '../../styles/Lead.css';
 import {
   initialMockLeads,
-  initialMockDemos
+  initialMockDemos     
 } from './mockLead';
 import { initialMockProducts } from '../Masters/mockProducts';
 
@@ -624,17 +624,7 @@ const LeadDemo = ({
   // Actions Column Renderer for Section 4 Main Table
   const tableActions = (row) => (
     <div className="category-actions-container">
-      <button
-        type="button"
-        className="category-action-btn view-btn"
-        title="View Demo Details"
-        onClick={() => {
-          setViewDemoRecord(row);
-          setIsViewModalOpen(true);
-        }}
-      >
-        <Eye size={15} color="#2563EB" />
-      </button>
+      
 
       <button
         type="button"

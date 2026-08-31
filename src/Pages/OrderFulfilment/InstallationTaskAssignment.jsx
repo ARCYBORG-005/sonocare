@@ -69,16 +69,25 @@ const InstallationTaskAssignment = ({ pis = [], setPIs, leads = [], employees = 
   // Total Order Value calculation
   const totalOrderValue = Number(targetPI?.totalOrderValue || 11800000);
 
+  // Real-time Total Paid Amount from Transaction History Log
+  const totalPaidFromHistory = useMemo(() => {
+    if (targetPI && targetPI.transactions && targetPI.transactions.length > 0) {
+      return targetPI.transactions.reduce((acc, t) => acc + Number(t.paidAmount || 0), 0);
+    }
+    return Number(targetPI?.paidAmount || 5000000);
+  }, [targetPI]);
+
   // -------------------------------------------------------------------------
   // SECTION 3: MANUAL PAYMENT DETAILS & ZERO PAYMENT AUTHORIZATION STATE
   // -------------------------------------------------------------------------
   const [paymentReceived, setPaymentReceived] = useState('Yes'); // 'Yes' | 'No'
   const [paymentStatus, setPaymentStatus] = useState('Partial');
-  const [amountPaid, setAmountPaid] = useState('5000000');
+  const [amountPaid, setAmountPaid] = useState('');
   const [proofFileName, setProofFileName] = useState('NEFT_Receipt_50L.pdf');
   const [operationsRemarks, setOperationsRemarks] = useState('Payment verified via NEFT bank transfer.');
 
-  const paidVal = paymentReceived === 'No' ? 0 : (Number(amountPaid) || 0);
+  const effectivePaidAmount = amountPaid !== '' ? (Number(amountPaid) || 0) : totalPaidFromHistory;
+  const paidVal = paymentReceived === 'No' ? 0 : effectivePaidAmount;
   const remainingVal = Math.max(0, totalOrderValue - paidVal);
 
   // -------------------------------------------------------------------------
@@ -159,11 +168,34 @@ const InstallationTaskAssignment = ({ pis = [], setPIs, leads = [], employees = 
   };
 
   // -------------------------------------------------------------------------
+  // WARRANTY & INSTALLATION DATE STATE (SECTION 2 & TABLE INTEGRATION)
+  // -------------------------------------------------------------------------
+  const [installationDate, setInstallationDate] = useState(
+    targetPI?.installationData?.installationDate || new Date().toISOString().split('T')[0]
+  );
+  const [warrantyMonths, setWarrantyMonths] = useState(
+    targetPI?.installationData?.warrantyMonths || 12
+  );
+
+  // Calculate Warranty End Date: Installation Date + Warranty Duration Months
+  const warrantyEndDate = useMemo(() => {
+    if (!installationDate) return '';
+    const d = new Date(installationDate);
+    if (isNaN(d.getTime())) return '';
+    d.setMonth(d.getMonth() + Number(warrantyMonths || 12));
+    return d.toISOString().split('T')[0];
+  }, [installationDate, warrantyMonths]);
+
+  // -------------------------------------------------------------------------
   // SECTION 5: INSTALLATION WORKFLOW EXECUTION & OTP STATE
   // -------------------------------------------------------------------------
   const [workflowState, setWorkflowState] = useState({
     taskAccepted: true,
     installationDate: new Date().toISOString().split('T')[0],
+    installationStartDate: new Date().toISOString().split('T')[0],
+    installationStartTime: '09:30 AM',
+    installationEndDate: new Date().toISOString().split('T')[0],
+    installationEndTime: '04:30 PM',
     serviceReportNumber: 'SR-2026-0891',
     serviceNotes: 'All ultrasound transducers tested. Software license key activated cleanly.',
     happyCodeOtp: '',
@@ -180,7 +212,7 @@ const InstallationTaskAssignment = ({ pis = [], setPIs, leads = [], employees = 
       return;
     }
     setWorkflowState((prev) => ({ ...prev, otpVerified: true }));
-    toast.success('🔒 Customer Happy Code OTP Verified Successfully!');
+    toast.success('Customer Happy Code OTP Verified Successfully!');
   };
 
   // Save Assignment Handler
@@ -196,6 +228,25 @@ const InstallationTaskAssignment = ({ pis = [], setPIs, leads = [], employees = 
     if (!assignmentData.assignedEmployees || assignmentData.assignedEmployees.length === 0) {
       toast.error(`Please select at least one executive for ${selectedTerritory} territory.`);
       return;
+    }
+
+    if (setPIs && targetPI) {
+      setPIs((prev) =>
+        prev.map((p) =>
+          p.id === targetPI.id
+            ? {
+                ...p,
+                installationData: {
+                  installationDate,
+                  warrantyMonths,
+                  warrantyEndDate,
+                  assignmentData,
+                  savedAt: new Date().toLocaleString()
+                }
+              }
+            : p
+        )
+      );
     }
 
     toast.success(`Installation Task Assignment updated for ${selectedTerritory} territory!`);
@@ -215,7 +266,28 @@ const InstallationTaskAssignment = ({ pis = [], setPIs, leads = [], employees = 
     }
 
     setWorkflowState((prev) => ({ ...prev, installationStatus: 'Completed' }));
-    toast.success(' Installation Task Marked COMPLETED! Customer feedback survey dispatched.');
+
+    if (setPIs && targetPI) {
+      setPIs((prev) =>
+        prev.map((p) =>
+          p.id === targetPI.id
+            ? {
+                ...p,
+                installationStatus: 'Completed',
+                installationData: {
+                  installationDate,
+                  warrantyMonths,
+                  warrantyEndDate,
+                  assignmentData,
+                  savedAt: new Date().toLocaleString()
+                }
+              }
+            : p
+        )
+      );
+    }
+
+    toast.success('Installation Task Marked COMPLETED! Customer feedback survey dispatched.');
     setTimeout(() => {
       navigate('/order-fulfilment');
     }, 1200);
@@ -376,11 +448,18 @@ const InstallationTaskAssignment = ({ pis = [], setPIs, leads = [], employees = 
             )}
           </div>
           <div className="p-3">
-            <div className="row g-3">
-              <div className="col-12 col-md-6">
+            <div className="row g-3 ">
+              <div className="col-12 col-md-6 ">
                 <InputField
                   label="Product System"
                   value={targetPI?.lineItems?.[0]?.productName || 'Sonoscape X5 Portable Ultrasound System (Qty: 2)'}
+                  disabled={true}
+                />
+              </div>
+              <div className="col-12 col-md-6">
+                <InputField
+                  label="Product Serial Number (SN)"
+                  value={targetPI?.lineItems?.[0]?.serialNumber || 'SN-2026-001'}
                   disabled={true}
                 />
               </div>
@@ -423,6 +502,35 @@ const InstallationTaskAssignment = ({ pis = [], setPIs, leads = [], employees = 
                   disabled={true}
                 />
               </div>
+              <div className="col-12 col-md-6  ">
+                <InputField
+                  label="Installation Date (Auto-set from Report) "
+                  type="date"
+                  value={installationDate}
+                  onChange={(e) => setInstallationDate(e.target.value)}
+                />
+              </div>
+              <div className="col-12 col-md-6">
+                <Dropdown
+                  label="Warranty Duration (Months) "
+                  options={['6 Months', '12 Months', '24 Months', '36 Months', '48 Months', '60 Months']}
+                  value={`${warrantyMonths} Months`}
+                  dropUp={true}
+                  onChange={(e) => {
+                    const months = parseInt(e.target.value, 10) || 12;
+                    setWarrantyMonths(months);
+                  }}
+                />
+              </div>
+              <div className="col-12 col-md-6">
+                <InputField
+                  label="Warranty Expiry Date (Calculated)"
+                  type="date"
+                  value={warrantyEndDate}
+                  disabled={true}
+                  helpText="Calculated: Installation Date + Duration"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -438,7 +546,7 @@ const InstallationTaskAssignment = ({ pis = [], setPIs, leads = [], employees = 
               {/* Payment Received Dropdown (Yes / No) */}
               <div className="col-12 col-md-6">
                 <Dropdown
-                  label="Payment Received? *"
+                  label="Payment Received? "
                   options={['Yes', 'No']}
                   value={paymentReceived}
                   onChange={(e) => {
@@ -468,9 +576,9 @@ const InstallationTaskAssignment = ({ pis = [], setPIs, leads = [], employees = 
                   </div>
                   <div className="col-12 col-md-6">
                     <InputField
-                      label="Amount Paid (₹) *"
+                      label="Amount Paid (₹) "
                       type="number"
-                      value={amountPaid}
+                      value={amountPaid !== '' ? amountPaid : effectivePaidAmount}
                       onChange={(e) => setAmountPaid(e.target.value)}
                     />
                   </div>
@@ -641,10 +749,34 @@ const InstallationTaskAssignment = ({ pis = [], setPIs, leads = [], employees = 
               </div>
               <div className="col-12 col-md-6">
                 <InputField
-                  label="Installation Date"
-                  type="date"
-                  value={workflowState.installationDate}
-                  onChange={(e) => setWorkflowState({ ...workflowState, installationDate: e.target.value })}
+                  label="Installation Start Date & Time *"
+                  type="text"
+                  placeholder="e.g. 2026-08-30 09:30 AM"
+                  value={`${workflowState.installationStartDate} ${workflowState.installationStartTime}`}
+                  onChange={(e) => {
+                    const parts = e.target.value.split(' ');
+                    setWorkflowState({
+                      ...workflowState,
+                      installationStartDate: parts[0] || workflowState.installationStartDate,
+                      installationStartTime: parts.slice(1).join(' ') || workflowState.installationStartTime
+                    });
+                  }}
+                />
+              </div>
+              <div className="col-12 col-md-6">
+                <InputField
+                  label="Installation Completion End Date & Time *"
+                  type="text"
+                  placeholder="e.g. 2026-08-30 04:30 PM"
+                  value={`${workflowState.installationEndDate} ${workflowState.installationEndTime}`}
+                  onChange={(e) => {
+                    const parts = e.target.value.split(' ');
+                    setWorkflowState({
+                      ...workflowState,
+                      installationEndDate: parts[0] || workflowState.installationEndDate,
+                      installationEndTime: parts.slice(1).join(' ') || workflowState.installationEndTime
+                    });
+                  }}
                 />
               </div>
 

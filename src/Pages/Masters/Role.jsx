@@ -20,7 +20,7 @@ const mockDepartments = [
 ];
 
 // Initial Mock Dataset for Role Master
-const initialRoles = [
+export const initialRoles = [
   {
     id: 1,
     roleId: 'R001',
@@ -78,8 +78,24 @@ const initialRoles = [
 ];
 
 const Role = () => {
-  // --- LOCAL MOCK STATE ---
-  const [roles, setRoles] = useState(initialRoles);
+  // --- LOCAL MOCK STATE WITH LOCALSTORAGE SYNC ---
+  const [roles, setRoles] = useState(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('app_roles') || '[]');
+      if (stored.length > 0) return stored;
+    } catch (e) {
+      console.error(e);
+    }
+    return [...initialRoles];
+  });
+
+  React.useEffect(() => {
+    try {
+      localStorage.setItem('app_roles', JSON.stringify(roles));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [roles]);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 

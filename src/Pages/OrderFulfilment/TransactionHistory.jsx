@@ -153,8 +153,8 @@ const TransactionHistory = ({ pis = [], setPIs, leads = [] }) => {
           <button
             type="button"
             className="btn btn-sm btn-outline-secondary me-2 px-2 py-1"
-            onClick={() => navigate('/order-fulfilment')}
-            title="Back to Order Fulfilment Register"
+            onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/proforma-invoice'))}
+            title="Back to Register"
           >
             <ArrowLeft size={16} />
           </button>
@@ -263,7 +263,7 @@ const TransactionHistory = ({ pis = [], setPIs, leads = [] }) => {
               <div className="row g-3">
                 <div className="col-12 col-md-6">
                   <InputField
-                    label="Transaction Date *"
+                    label="Transaction Date "
                     type="date"
                     required={true}
                     value={newTxnForm.txnDate}
@@ -272,7 +272,7 @@ const TransactionHistory = ({ pis = [], setPIs, leads = [] }) => {
                 </div>
                 <div className="col-12 col-md-6">
                   <Dropdown
-                    label="Payment Method / Type *"
+                    label="Payment Method / Type "
                     required={true}
                     options={[
                       'Bank Transfer (NEFT / RTGS)',
@@ -287,7 +287,7 @@ const TransactionHistory = ({ pis = [], setPIs, leads = [] }) => {
                 </div>
                 <div className="col-12 col-md-6">
                   <InputField
-                    label="Amount Paid (₹) *"
+                    label="Amount Paid (₹) "
                     type="number"
                     required={true}
                     placeholder="e.g. 5000000"
@@ -297,7 +297,7 @@ const TransactionHistory = ({ pis = [], setPIs, leads = [] }) => {
                 </div>
                 <div className="col-12 col-md-6">
                   <InputField
-                    label="Transaction Reference / ID *"
+                    label="Transaction Reference / ID "
                     required={true}
                     placeholder="e.g. TXN-2026-8912"
                     value={newTxnForm.refId}

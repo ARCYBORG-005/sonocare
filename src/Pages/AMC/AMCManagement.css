@@ -1,0 +1,128 @@
+/* ==========================================================================
+   Warranty & AMC Management Module Styling (AMCManagement.css)
+   Clean, modern layout matching application design system.
+   ========================================================================== */
+
+.amc-management-page {
+  font-family: inherit;
+  color: var(--crm-text-dark, #0F172A);
+}
+
+/* Page Header */
+.amc-header-icon {
+  color: var(--crm-primary, #2E3192);
+}
+
+/* Metric KPI Cards (Clean Text & Number Summary) */
+.amc-metric-card {
+  background-color: #ffffff;
+  border: 1px solid var(--crm-border, #E2E8F0);
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  transition: box-shadow 0.2s ease;
+}
+
+.amc-metric-card:hover {
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+.amc-metric-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.amc-metric-val {
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: monospace;
+  color: #0F172A;
+}
+
+/* AMC Table Text Formatting */
+.amc-contract-id {
+  font-family: monospace;
+  font-weight: 700;
+  color: #2E3192;
+}
+
+.amc-client-name {
+  font-weight: 600;
+  color: #0F172A;
+}
+
+.amc-type-samc {
+  color: #2563EB;
+  font-weight: 600;
+}
+
+.amc-type-camc {
+  color: #7C3AED;
+  font-weight: 700;
+}
+
+.amc-status-active {
+  color: #16A34A;
+  font-weight: 600;
+}
+
+.amc-status-pending {
+  color: #D97706;
+  font-weight: 600;
+}
+
+.amc-status-lapsed {
+  color: #DC2626;
+  font-weight: 600;
+}
+
+.amc-alert-normal {
+  color: #64748B;
+}
+
+.amc-alert-warning {
+  color: #D97706;
+  font-weight: 600;
+}
+
+.amc-alert-danger {
+  color: #DC2626;
+  font-weight: 700;
+}
+
+/* Action Buttons */
+.amc-renew-btn {
+  background-color: #2563EB !important;
+  border-color: #2563EB !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 0.775rem !important;
+  padding: 0.25rem 0.6rem !important;
+  border-radius: 0.375rem !important;
+}
+
+.amc-renew-btn:hover {
+  background-color: #1D4ED8 !important;
+}
+
+/* Detail Card & Form Sections */
+.amc-detail-section {
+  background-color: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.amc-detail-label {
+  font-size: 0.775rem;
+  color: #64748B;
+  display: block;
+}
+
+.amc-detail-val {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #0F172A;
+}

@@ -499,19 +499,10 @@ const Lead = ({
               onClick={() => navigate(`/leads/${row.leadId}/add-follow-up`)}
               disabled={row.leadStatus === 'Drop'}
             >
-              <PhoneCall size={12} />
-              <span>+ Follow-up</span>
+              <PhoneCall size={16} />
+              
             </button>
-            {leadFups.length > 0 && (
-              <button
-                type="button"
-                className="btn btn-sm btn-link p-0 text-decoration-none small text-primary fw-semibold"
-                title="View Full Follow-up History Page"
-                onClick={() => navigate(`/leads/${row.leadId}/follow-ups`)}
-              >
-                ({leadFups.length})
-              </button>
-            )}
+            
           </div>
         );
       }
@@ -612,8 +603,8 @@ const Lead = ({
           title="Create New Lead from Dropped"
           onClick={() => handleCreateNewLeadFromDropped(row)}
         >
-          <RotateCcw size={12} />
-          <span>Create New Lead</span>
+          <RotateCcw size={16} />
+        
         </button>
       )}
     </div>

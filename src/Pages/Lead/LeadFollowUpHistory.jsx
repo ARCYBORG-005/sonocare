@@ -160,12 +160,12 @@ const LeadFollowUpHistory = ({
         prev.map((l) =>
           l.leadId === activeLead.leadId
             ? {
-                ...l,
-                leadStatus: 'In Progress',
-                lastActivityDate: addFormData.followUpDate,
-                nextFollowUpDate: addFormData.nextFollowUpDate,
-                nextFollowUpTime: addFormData.nextFollowUpTime
-              }
+              ...l,
+              leadStatus: 'In Progress',
+              lastActivityDate: addFormData.followUpDate,
+              nextFollowUpDate: addFormData.nextFollowUpDate,
+              nextFollowUpTime: addFormData.nextFollowUpTime
+            }
             : l
         )
       );
@@ -176,11 +176,11 @@ const LeadFollowUpHistory = ({
           prev.map((l) =>
             l.leadId === activeLead.leadId
               ? {
-                  ...l,
-                  lastActivityDate: addFormData.followUpDate,
-                  nextFollowUpDate: addFormData.nextFollowUpDate,
-                  nextFollowUpTime: addFormData.nextFollowUpTime
-                }
+                ...l,
+                lastActivityDate: addFormData.followUpDate,
+                nextFollowUpDate: addFormData.nextFollowUpDate,
+                nextFollowUpTime: addFormData.nextFollowUpTime
+              }
               : l
           )
         );
@@ -359,152 +359,152 @@ const LeadFollowUpHistory = ({
 
       {/* 2. INLINE ADD FOLLOW-UP LOG FORM (ALWAYS VISIBLE) */}
       <div className="card shadow-sm border-0 mb-4" style={{ borderRadius: '10px' }}>
-          <div className="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
-            <div className="d-flex align-items-center gap-2">
-              <Clock size={20} color="#2E3192" />
-              <h5 className="mb-0 fw-bold text-dark fs-6">LOG NEW FOLLOW-UP ACTIVITY</h5>
-            </div>
-            <span className="badge bg-primary">Add New Log</span>
+        <div className="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
+          <div className="d-flex align-items-center gap-2">
+            <Clock size={20} color="#2E3192" />
+            <h5 className="mb-0 fw-bold text-dark fs-6">LOG NEW FOLLOW-UP ACTIVITY</h5>
           </div>
-
-          <div className="card-body p-4">
-            <form onSubmit={handleAddSubmit} noValidate>
-              <div className="row g-3">
-                <div className="col-12 col-md-6">
-                  <label className="form-label small fw-bold text-dark mb-1">Select Lead Record </label>
-                  <select
-                    className="form-select form-select-sm"
-                    value={activeLead ? activeLead.leadId : ''}
-                    onChange={(e) => {
-                      const matched = (leads || []).find((l) => l.leadId === e.target.value);
-                      setSelectedLeadForAdd(matched || null);
-                    }}
-                  >
-                    {(leads || []).map((l) => (
-                      <option key={l.leadId} value={l.leadId}>
-                        {l.leadId} — {l.customerName} ({l.contactPerson}) — Status: {l.leadStatus}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="col-12 col-md-6">
-                  <InputField
-                    label="Assigned Executive"
-                    value={activeLead ? activeLead.assignedEmployeeName : 'Sales Executive'}
-                    disabled={true}
-                  />
-                </div>
-
-                <div className="col-12 col-md-4">
-                  <Dropdown
-                    label="Outreach Type "
-                    options={outreachTypeOptions}
-                    value={addFormData.outreachType}
-                    onChange={(e) => handleInputChange('outreachType', e.target.value)}
-                  />
-                </div>
-
-                <div className="col-12 col-md-4">
-                  <Dropdown
-                    label="Follow-up Status "
-                    options={followUpStatusOptions}
-                    value={addFormData.followUpStatus}
-                    onChange={(e) => handleInputChange('followUpStatus', e.target.value)}
-                  />
-                </div>
-
-                <div className="col-12 col-md-4">
-                  <Dropdown
-                    label="Outcome "
-                    options={outcomeOptions}
-                    value={addFormData.outcome}
-                    onChange={(e) => handleInputChange('outcome', e.target.value)}
-                  />
-                </div>
-
-                <div className="col-12 col-md-6">
-                  <InputField
-                    label="Follow-up Date "
-                    type="date"
-                    value={addFormData.followUpDate}
-                    onChange={(e) => handleInputChange('followUpDate', e.target.value)}
-                  />
-                </div>
-
-                <div className="col-12 col-md-6">
-                  <InputField
-                    label="Follow-up Time"
-                    type="text"
-                    placeholder="e.g. 10:30 AM"
-                    value={addFormData.followUpTime}
-                    onChange={(e) => handleInputChange('followUpTime', e.target.value)}
-                  />
-                </div>
-
-                <div className="col-12 col-md-6">
-                  <InputField
-                    label="Next Follow-up Date"
-                    type="date"
-                    value={addFormData.nextFollowUpDate}
-                    onChange={(e) => handleInputChange('nextFollowUpDate', e.target.value)}
-                  />
-                </div>
-
-                <div className="col-12 col-md-6">
-                  <InputField
-                    label="Next Follow-up Time"
-                    type="text"
-                    placeholder="e.g. 02:30 PM"
-                    value={addFormData.nextFollowUpTime}
-                    onChange={(e) => handleInputChange('nextFollowUpTime', e.target.value)}
-                  />
-                </div>
-
-                <div className="col-12">
-                  <InputField
-                    label="Activity Title "
-                    placeholder="e.g. Discussed pricing quotation & scheduled demo"
-                    value={addFormData.title}
-                    onChange={(e) => handleInputChange('title', e.target.value)}
-                    error={formErrors.title}
-                  />
-                </div>
-
-                <div className="col-12">
-                  <InputField
-                    label="Interaction Description"
-                    type="textarea"
-                    rows={2}
-                    placeholder="Detailed summary of discussion with customer..."
-                    value={addFormData.description}
-                    onChange={(e) => handleInputChange('description', e.target.value)}
-                  />
-                </div>
-
-                <div className="col-12">
-                  <InputField
-                    label="Remarks "
-                    placeholder="e.g. Send updated brochure before Friday"
-                    value={addFormData.remarks}
-                    onChange={(e) => handleInputChange('remarks', e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="d-flex justify-content-end gap-2 mt-4 pt-2 border-top">
-                <Button
-                  type="submit"
-                  variant="primary"
-                  style={{ backgroundColor: '#2E3192', borderColor: '#2E3192' }}
-                  className="px-4"
-                >
-                  <Plus size={16} className="me-1" />Add Log
-                </Button>
-              </div>
-            </form>
-          </div>
+          <span className="badge bg-primary">Add New Log</span>
         </div>
+
+        <div className="card-body p-4">
+          <form onSubmit={handleAddSubmit} noValidate>
+            <div className="row g-3">
+              <div className="col-12 col-md-6">
+                <label className="form-label small fw-bold text-dark mb-1">Select Lead Record </label>
+                <select
+                  className="form-select form-select-sm"
+                  value={activeLead ? activeLead.leadId : ''}
+                  onChange={(e) => {
+                    const matched = (leads || []).find((l) => l.leadId === e.target.value);
+                    setSelectedLeadForAdd(matched || null);
+                  }}
+                >
+                  {(leads || []).map((l) => (
+                    <option key={l.leadId} value={l.leadId}>
+                      {l.leadId} — {l.customerName} ({l.contactPerson}) — Status: {l.leadStatus}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="col-12 col-md-6">
+                <InputField
+                  label="Assigned Executive"
+                  value={activeLead ? activeLead.assignedEmployeeName : 'Sales Executive'}
+                  disabled={true}
+                />
+              </div>
+
+              <div className="col-12 col-md-6">
+                <Dropdown
+                  label="Outreach Type "
+                  options={outreachTypeOptions}
+                  value={addFormData.outreachType}
+                  onChange={(e) => handleInputChange('outreachType', e.target.value)}
+                />
+              </div>
+
+              <div className="col-12 col-md-6">
+                <Dropdown
+                  label="Follow-up Status "
+                  options={followUpStatusOptions}
+                  value={addFormData.followUpStatus}
+                  onChange={(e) => handleInputChange('followUpStatus', e.target.value)}
+                />
+              </div>
+
+              <div className="col-12 col-md-6">
+                <Dropdown
+                  label="Outcome "
+                  options={outcomeOptions}
+                  value={addFormData.outcome}
+                  onChange={(e) => handleInputChange('outcome', e.target.value)}
+                />
+              </div>
+
+              <div className="col-12 col-md-6">
+                <InputField
+                  label="Follow-up Date "
+                  type="date"
+                  value={addFormData.followUpDate}
+                  onChange={(e) => handleInputChange('followUpDate', e.target.value)}
+                />
+              </div>
+
+              <div className="col-12 col-md-6">
+                <InputField
+                  label="Follow-up Time"
+                  type="text"
+                  placeholder="e.g. 10:30 AM"
+                  value={addFormData.followUpTime}
+                  onChange={(e) => handleInputChange('followUpTime', e.target.value)}
+                />
+              </div>
+
+              <div className="col-12 col-md-6">
+                <InputField
+                  label="Next Follow-up Date"
+                  type="date"
+                  value={addFormData.nextFollowUpDate}
+                  onChange={(e) => handleInputChange('nextFollowUpDate', e.target.value)}
+                />
+              </div>
+
+              <div className="col-12 col-md-6">
+                <InputField
+                  label="Next Follow-up Time"
+                  type="text"
+                  placeholder="e.g. 02:30 PM"
+                  value={addFormData.nextFollowUpTime}
+                  onChange={(e) => handleInputChange('nextFollowUpTime', e.target.value)}
+                />
+              </div>
+
+              <div className="col-12">
+                <InputField
+                  label="Activity Title "
+                  placeholder="e.g. Discussed pricing quotation & scheduled demo"
+                  value={addFormData.title}
+                  onChange={(e) => handleInputChange('title', e.target.value)}
+                  error={formErrors.title}
+                />
+              </div>
+
+              <div className="col-12">
+                <InputField
+                  label="Interaction Description"
+                  type="textarea"
+                  rows={2}
+                  placeholder="Detailed summary of discussion with customer..."
+                  value={addFormData.description}
+                  onChange={(e) => handleInputChange('description', e.target.value)}
+                />
+              </div>
+
+              <div className="col-12">
+                <InputField
+                  label="Remarks "
+                  placeholder="e.g. Send updated brochure before Friday"
+                  value={addFormData.remarks}
+                  onChange={(e) => handleInputChange('remarks', e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="d-flex justify-content-end gap-2 mt-4 pt-2 border-top">
+              <Button
+                type="submit"
+                variant="primary"
+                style={{ backgroundColor: '#2E3192', borderColor: '#2E3192' }}
+                className="px-4"
+              >
+                <Plus size={16} className="me-1" />Add Log
+              </Button>
+            </div>
+          </form>
+        </div>
+      </div>
 
       {/* 3. FOLLOW-UP HISTORY REGISTER TABLE (BOTTOM SECTION ON SAME PAGE) */}
       <div className="category-card shadow-sm border-0" style={{ borderRadius: '10px' }}>

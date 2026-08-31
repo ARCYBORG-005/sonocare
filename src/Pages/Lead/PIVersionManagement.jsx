@@ -195,6 +195,13 @@ const PIVersionManagement = ({ pis = [], setPIs, leads = [], setLeads }) => {
   const handleFinalOrderDecision = (decisionStatus) => {
     if (!selectedPIRow) return;
 
+    if (decisionStatus === 'Accept') {
+      if (!selectedPIRow.lineItems || selectedPIRow.lineItems.length === 0) {
+        toast.error('Cannot confirm order: This Proforma Invoice has 0 products. Please add at least one product before confirming.');
+        return;
+      }
+    }
+
     if (confirmationType === 'Customer') {
       if (!isTermsAccepted) {
         toast.error('Customer must accept Terms & Conditions before confirmation.');
@@ -298,36 +305,10 @@ const PIVersionManagement = ({ pis = [], setPIs, leads = [], setLeads }) => {
     setIsConfirmationModalOpen(false);
   };
 
-  // --- OPEN TRANSACTION HISTORY MODAL ---
+  // --- OPEN TRANSACTION HISTORY DEDICATED PAGE ---
   const handleOpenTxnHistoryModal = (row) => {
-    setSelectedTxnPIRow(row);
-
-    // Initialize mock transaction if none present yet
-    if (!row.transactions || row.transactions.length === 0) {
-      const orderVal = Number(row.totalOrderValue || 11800000);
-      const mockInitPaid = 5000000;
-      const mockInitTxns = [
-        {
-          id: 'TXN-2026-001',
-          date: row.piDate || '2026-08-25',
-          paymentMethod: 'Bank Transfer',
-          paidAmount: mockInitPaid,
-          remainingBalance: Math.max(0, orderVal - mockInitPaid),
-          proofFileName: 'Advance_Payment_NEFT.pdf',
-          remarks: '50% Commercial Advance Payment',
-          status: 'Verified'
-        }
-      ];
-
-      if (setPIs) {
-        setPIs((prev) =>
-          prev.map((p) => (p.id === row.id ? { ...p, transactions: mockInitTxns } : p))
-        );
-      }
-      setSelectedTxnPIRow({ ...row, transactions: mockInitTxns });
-    }
-
-    setIsTxnHistoryModalOpen(true);
+    if (!row) return;
+    navigate(`/proforma-invoice/${encodeURIComponent(row.piNumber)}/payments`);
   };
 
   // --- OPEN ADD TRANSACTION SUB-MODAL ---
@@ -386,6 +367,10 @@ const PIVersionManagement = ({ pis = [], setPIs, leads = [], setLeads }) => {
   // --- VERSION BUTTON CLICKED IN TABLE VIEW ---
   const handleVersionButtonClick = (sourcePI) => {
     if (!sourcePI) return;
+    if (!sourcePI.lineItems || sourcePI.lineItems.length === 0) {
+      toast.error('Cannot create new version: The source Proforma Invoice has 0 products.');
+      return;
+    }
     const matchedLead = (leads || []).find((l) => l.leadId === sourcePI.leadId);
     const targetLeadId = matchedLead ? matchedLead.leadId : sourcePI.leadId;
     navigate(`/leads/${targetLeadId}/pi?piId=${sourcePI.id}&mode=version`);
@@ -544,6 +529,16 @@ const PIVersionManagement = ({ pis = [], setPIs, leads = [], setLeads }) => {
       title: 'PRODUCT NAME',
       sortable: true,
       render: (val) => <span className="fw-bold text-dark">{val}</span>
+    },
+    {
+      key: 'serialNumber',
+      title: 'SERIAL NUMBER (SN)',
+      sortable: true,
+      render: (val, row, idx) => (
+        <span className="badge bg-light text-primary border font-monospace fw-bold">
+          {val || `SN-2026-${String(idx + 1).padStart(3, '0')}`}
+        </span>
+      )
     },
     {
       key: 'quantity',

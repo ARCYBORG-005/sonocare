@@ -1,0 +1,341 @@
+/* ==========================================================================
+   Inventory Master & Stock Shift Desk Styling
+   Inherits font-family, sizes, weights, and styling from shared system CSS.
+   ========================================================================== */
+
+.inventory-master-page {
+  font-family: inherit;
+  color: var(--crm-text-dark, #0F172A);
+  padding: 1.5rem;
+}
+
+/* Page Header */
+.inventory-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.inventory-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.inventory-page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--crm-text-dark, #0F172A);
+  margin: 0;
+}
+
+.inventory-page-subtitle {
+  font-size: 0.875rem;
+  color: #64748B;
+  margin-top: 0.25rem;
+  margin-bottom: 0;
+}
+
+/* Summary Statistics Cards Grid */
+.inventory-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.inventory-stat-card {
+  background-color: #ffffff;
+  border: 1px solid var(--crm-border, #E2E8F0);
+  border-radius: 0.625rem;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.inventory-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+.inventory-stat-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #64748B;
+  display: block;
+}
+
+.inventory-stat-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--crm-text-dark, #0F172A);
+  margin-top: 0.35rem;
+  margin-bottom: 0;
+}
+
+.inventory-stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inventory-stat-icon.blue {
+  background-color: #EFF6FF;
+  color: #2563EB;
+}
+
+.inventory-stat-icon.green {
+  background-color: #F0FDF4;
+  color: #16A34A;
+}
+
+.inventory-stat-icon.amber {
+  background-color: #FFFBEB;
+  color: #D97706;
+}
+
+/* Main Inventory Container Card */
+.inventory-card {
+  background-color: #ffffff;
+  border-radius: 0.625rem;
+  border: 1px solid var(--crm-border, #E2E8F0);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.inventory-card-header {
+  padding: 1rem 1.25rem;
+  background-color: #F8FAFC;
+  border-bottom: 1px solid var(--crm-border, #E2E8F0);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.inventory-card-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--crm-primary, #2E3192);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Search & Filters Bar */
+.inventory-filter-bar {
+  padding: 1rem 1.25rem;
+  background-color: #ffffff;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+/* Item Type Badges */
+.inventory-type-badge {
+  font-family: monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.35rem 0.75rem;
+  border-radius: 0.375rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.inventory-type-badge.product {
+  background-color: #EFF6FF;
+  color: #1E40AF;
+  border: 1px solid #BFDBFE;
+}
+
+.inventory-type-badge.kit {
+  background-color: #F0FDF4;
+  color: #166534;
+  border: 1px solid #BBF7D0;
+}
+
+/* Stock Status Level Badges */
+.inventory-status-pill {
+  font-family: monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid transparent;
+}
+
+.inventory-status-pill.in-stock {
+  background-color: #DCFCE7;
+  color: #15803D;
+  border-color: #86EFAC;
+}
+
+.inventory-status-pill.low-stock {
+  background-color: #FEF3C7;
+  color: #B45309;
+  border-color: #FDE68A;
+}
+
+.inventory-status-pill.out-of-stock {
+  background-color: #FEE2E2;
+  color: #B91C1C;
+  border-color: #FCA5A5;
+}
+
+/* Action Icon Buttons */
+.inventory-actions-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.inventory-action-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 0.375rem;
+  border: 1px solid #CBD5E1;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* View Button (Cyan/Blue) */
+.inventory-action-btn.view-btn {
+  color: #0284C7;
+  background-color: #F0F9FF;
+  border-color: #BAE6FD;
+}
+
+.inventory-action-btn.view-btn:hover {
+  background-color: #E0F2FE;
+  color: #0369A1;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.2);
+}
+
+/* Edit Button (Corporate Blue) */
+.inventory-action-btn.edit-btn {
+  color: #2E3192;
+  background-color: #EEF2FF;
+  border-color: #C7D2FE;
+}
+
+.inventory-action-btn.edit-btn:hover {
+  background-color: #E0E7FF;
+  color: #1E1B4B;
+  box-shadow: 0 2px 6px rgba(46, 49, 146, 0.2);
+}
+
+/* Level / Stock Shift Button (Purple) */
+.inventory-action-btn.level-btn {
+  color: #7C3AED;
+  background-color: #F5F3FF;
+  border-color: #DDD6FE;
+}
+
+.inventory-action-btn.level-btn:hover {
+  background-color: #EDE9FE;
+  color: #5B21B6;
+  box-shadow: 0 2px 6px rgba(124, 58, 237, 0.25);
+}
+
+/* Stock Shift Modal Specifics */
+.inventory-shift-modal-header {
+  background-color: var(--crm-primary, #2E3192);
+  color: #ffffff;
+  border-top-left-radius: 0.625rem;
+  border-top-right-radius: 0.625rem;
+}
+
+.inventory-shift-strip {
+  background-color: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+/* ==========================================================================
+   RESPONSIVE MEDIA QUERIES (Mobile, Tablet, Laptop)
+   ========================================================================== */
+@media (max-width: 991px) {
+  .inventory-master-page {
+    padding: 1rem;
+  }
+
+  .inventory-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .inventory-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .inventory-title-group {
+    flex-wrap: wrap;
+  }
+
+  .inventory-page-title {
+    font-size: 1.25rem;
+  }
+
+  .inventory-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .inventory-filter-bar {
+    padding: 0.75rem;
+  }
+
+  .inventory-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .inventory-master-page {
+    padding: 0.75rem;
+  }
+
+  .inventory-stat-card {
+    padding: 1rem;
+  }
+
+  .inventory-stat-value {
+    font-size: 1.25rem;
+  }
+
+  .inventory-actions-container {
+    gap: 0.25rem;
+  }
+
+  .inventory-action-btn {
+    width: 28px;
+    height: 28px;
+  }
+}

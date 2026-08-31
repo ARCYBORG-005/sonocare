@@ -17,7 +17,8 @@ import {
   CreditCard,
   Wallet,
   Plus,
-  FileText
+  FileText,
+  Ban
 } from 'lucide-react';
 import { initialMockFulfilments } from './mockOrderFulfilment';
 import '../../styles/Category.css';
@@ -64,7 +65,10 @@ const OrderFulfilment = ({ pis = [], setPIs, leads = [] }) => {
             kitStatus: 'Pending',
             paymentStatus: pi.orderConfirmationData?.paymentDone === 'Yes' ? 'Partial' : 'Pending',
             paidAmount: pi.orderConfirmationData?.paidAmount || 0,
-            installationStatus: 'Pending',
+            installationStatus: pi.installationStatus || 'Pending',
+            installationDate: pi.installationData?.installationDate || '2026-08-28',
+            warrantyMonths: pi.installationData?.warrantyMonths || 12,
+            warrantyEndDate: pi.installationData?.warrantyEndDate || '2027-08-28',
             invoiceStatus: 'Generated & Locked',
             overallStatus: 'Pending',
             createdDate: new Date().toISOString().split('T')[0],
@@ -267,6 +271,51 @@ const OrderFulfilment = ({ pis = [], setPIs, leads = [] }) => {
           </div>
         );
       }
+    },
+    {
+      key: 'installationDate',
+      title: 'INSTALLATION DATE',
+      sortable: true,
+      align: 'center',
+      render: (val, row) => {
+        const instDate = row.installationData?.installationDate || val || '2026-08-28';
+        return <span className="font-monospace small">{instDate}</span>;
+      }
+    },
+    {
+      key: 'warrantyEndDate',
+      title: 'WARRANTY EXPIRY',
+      sortable: true,
+      align: 'center',
+      render: (val, row) => {
+        const expDate = row.installationData?.warrantyEndDate || val || '2027-08-28';
+        return <span className="font-monospace small text-dark fw-semibold">{expDate}</span>;
+      }
+    },
+    {
+      key: 'warrantyStatus',
+      title: 'WARRANTY STATUS',
+      sortable: true,
+      align: 'center',
+      render: (_, row) => {
+        const expDate = row.installationData?.warrantyEndDate || row.warrantyEndDate || '2027-08-28';
+        const todayStr = new Date().toISOString().split('T')[0];
+        const isExpired = expDate < todayStr;
+
+        if (isExpired) {
+          return (
+            <span className="badge bg-danger px-2 py-1 fs-6 font-monospace shadow-sm">
+              Warranty Ended
+            </span>
+          );
+        }
+
+        return (
+          <span className="badge bg-success px-2 py-1 fs-6 font-monospace shadow-sm">
+            Warranty Active
+          </span>
+        );
+      }
     }
   ];
 
@@ -311,6 +360,17 @@ const OrderFulfilment = ({ pis = [], setPIs, leads = [] }) => {
         onClick={() => handleOpenTransactionHistory(row)}
       >
         <Wallet size={14} color="#D97706" />
+      </button>
+
+      {/* 5. Order Cancellation Action Button */}
+      <button
+        type="button"
+        className="btn btn-sm btn-outline-danger px-2 py-1 fw-bold d-inline-flex align-items-center gap-1 shadow-sm"
+        style={{ color: '#DC2626', borderColor: '#DC2626', fontSize: '12px' }}
+        title="Open Rule 3.3.8 Order Cancellation Register"
+        onClick={() => navigate('/order-cancellation')}
+      >
+        <Ban size={14} color="#DC2626" />
       </button>
     </div>
   );
@@ -414,7 +474,7 @@ const OrderFulfilment = ({ pis = [], setPIs, leads = [] }) => {
             serialNumberHeader="S.NO"
             actions={tableActions}
             actionHeader="ACTIONS"
-            actionWidth="210px"
+            actionWidth="240px"
             emptyMessage="No order fulfilment records found."
             emptyIcon={<PackageCheck size={40} className="text-muted d-block mx-auto mb-2 opacity-50" />}
             paginated={true}

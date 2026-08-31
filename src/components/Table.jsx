@@ -465,8 +465,8 @@ const Table = ({
                 onChange={handlePageSizeChange}
                 aria-label="Select number of records per page"
               >
-                {pageSizeOptions.map((size) => (
-                  <option key={size} value={size}>
+                {pageSizeOptions.map((size, idx) => (
+                  <option key={`opt-${size}-${idx}`} value={size}>
                     {size}
                   </option>
                 ))}

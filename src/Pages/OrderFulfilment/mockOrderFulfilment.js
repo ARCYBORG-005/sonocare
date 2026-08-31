@@ -23,6 +23,9 @@ export const initialMockFulfilments = [
     paymentStatus: 'Partial',
     paidAmount: 5000000,
     installationStatus: 'Pending',
+    installationDate: '2026-08-28',
+    warrantyMonths: 12,
+    warrantyEndDate: '2027-08-28',
     overallStatus: 'Pending',
     createdDate: '2026-08-25',
     kits: [
@@ -66,6 +69,9 @@ export const initialMockFulfilments = [
     paymentStatus: 'Paid',
     paidAmount: 4500000,
     installationStatus: 'Scheduled',
+    installationDate: '2026-08-20',
+    warrantyMonths: 24,
+    warrantyEndDate: '2028-08-20',
     overallStatus: 'Pending',
     createdDate: '2026-08-20',
     kits: []
@@ -90,6 +96,9 @@ export const initialMockFulfilments = [
     paymentStatus: 'Paid',
     paidAmount: 7500000,
     installationStatus: 'Completed',
+    installationDate: '2024-05-10',
+    warrantyMonths: 12,
+    warrantyEndDate: '2025-05-10',
     overallStatus: 'Fulfilled',
     createdDate: '2026-08-15',
     kits: []

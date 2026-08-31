@@ -83,13 +83,18 @@ const KitGeneration = ({ pis = [], setPIs, leads = [], kits = initialMockKits })
   // Product-Level License State per product (pKey)
   const [productLicenses, setProductLicenses] = useState({});
 
-  // Product-Level Selected Kits MultiSelect state per product (pKey)
-  const [selectedKitsMap, setSelectedKitsMap] = useState({});
+  // Product-Level Configured Kits Table State & Form State per product (pKey)
+  const [configuredKitsMap, setConfiguredKitsMap] = useState({});
+  const [kitFormMap, setKitFormMap] = useState({});
 
   // Initialize state per product row
   useEffect(() => {
     const licensesMap = {};
     const kitsMap = {};
+    const formsMap = {};
+
+    const kitMasterList = (kits && kits.length > 0) ? kits : initialMockKits;
+    const defaultKitName = kitMasterList[3]?.kitName || kitMasterList[0]?.kitName || 'Sonoscape X5 Standard Transducer & Trolley Kit';
 
     initialLineItems.forEach((item, index) => {
       const pKey = item.id || index;
@@ -104,13 +109,27 @@ const KitGeneration = ({ pis = [], setPIs, leads = [], kits = initialMockKits })
       };
 
       kitsMap[pKey] = [
-        'Sonoscape X5 Standard Transducer & Trolley Kit'
+        {
+          id: 1,
+          kitName: defaultKitName,
+          serialNumber: `KIT-SN-2026-${String(index + 1).padStart(3, '0')}`,
+          quantity: 1,
+          price: 135000
+        }
       ];
+
+      formsMap[pKey] = {
+        selectedKit: defaultKitName,
+        quantity: '1',
+        serialNumber: `KIT-SN-2026-00${index + 2}`,
+        editingIndex: null
+      };
     });
 
     setProductLicenses(licensesMap);
-    setSelectedKitsMap(kitsMap);
-  }, [initialLineItems]);
+    setConfiguredKitsMap(kitsMap);
+    setKitFormMap(formsMap);
+  }, [initialLineItems, kits]);
 
   // Section 4 Payment Details State (Manually Entered)
   const [paymentReceived, setPaymentReceived] = useState('Yes'); // 'Yes' | 'No'
@@ -127,6 +146,129 @@ const KitGeneration = ({ pis = [], setPIs, leads = [], kits = initialMockKits })
   const paidVal = paymentReceived === 'No' ? 0 : (Number(amountPaid) || 0);
   const remainingVal = Math.max(0, totalOrderValue - paidVal);
 
+  // Table Columns for Configured Kits Table
+  const configuredKitColumns = useMemo(() => [
+    {
+      key: 'kitName',
+      title: 'KIT NAME',
+      sortable: true,
+      render: (val) => <span className="fw-bold text-dark">{val}</span>
+    },
+    {
+      key: 'serialNumber',
+      title: 'KIT SERIAL NUMBER (SN)',
+      sortable: true,
+      render: (val) => <span className="badge bg-light text-primary border font-monospace fw-bold">{val}</span>
+    },
+    {
+      key: 'quantity',
+      title: 'QTY',
+      sortable: true,
+      align: 'center',
+      render: (val) => <span className="badge bg-secondary font-monospace fs-6">{val || 1}</span>
+    },
+    {
+      key: 'price',
+      title: 'UNIT PRICE (₹)',
+      sortable: true,
+      align: 'right',
+      render: (val) => <span className="font-monospace">₹{Number(val || 0).toLocaleString('en-IN')}</span>
+    }
+  ], []);
+
+  // Kit Form & Table Handlers per product (pKey)
+  const updateKitFormField = (pKey, field, val) => {
+    setKitFormMap((prev) => ({
+      ...prev,
+      [pKey]: {
+        ...(prev[pKey] || {}),
+        [field]: val
+      }
+    }));
+  };
+
+  const handleAddOrUpdateKit = (pKey) => {
+    const curForm = kitFormMap[pKey] || {};
+    const kName = curForm.selectedKit || 'Sonoscape X5 Standard Transducer & Trolley Kit';
+    const qty = Number(curForm.quantity) || 1;
+    const sn = curForm.serialNumber || `KIT-SN-2026-${String(Math.floor(100 + Math.random() * 900))}`;
+    const matchedMaster = (kits || initialMockKits).find((k) => k.kitName === kName);
+    const kPrice = matchedMaster ? matchedMaster.kitPrice : 135000;
+
+    const isEdit = curForm.editingIndex !== null && curForm.editingIndex !== undefined;
+
+    const kitItem = {
+      id: isEdit ? (configuredKitsMap[pKey]?.[curForm.editingIndex]?.id || Date.now()) : Date.now(),
+      kitName: kName,
+      serialNumber: sn,
+      quantity: qty,
+      price: kPrice
+    };
+
+    if (isEdit) {
+      setConfiguredKitsMap((prev) => ({
+        ...prev,
+        [pKey]: (prev[pKey] || []).map((item, idx) => (idx === curForm.editingIndex ? kitItem : item))
+      }));
+      toast.success(`Kit "${kName}" updated in table!`);
+    } else {
+      setConfiguredKitsMap((prev) => ({
+        ...prev,
+        [pKey]: [...(prev[pKey] || []), kitItem]
+      }));
+      toast.success(`Kit "${kName}" added to configured kits table!`);
+    }
+
+    // Reset form
+    setKitFormMap((prev) => ({
+      ...prev,
+      [pKey]: {
+        selectedKit: kName,
+        quantity: '1',
+        serialNumber: `KIT-SN-2026-${String(Math.floor(100 + Math.random() * 900))}`,
+        editingIndex: null
+      }
+    }));
+  };
+
+  const handleEditKit = (pKey, idx) => {
+    const targetItem = configuredKitsMap[pKey]?.[idx];
+    if (targetItem) {
+      setKitFormMap((prev) => ({
+        ...prev,
+        [pKey]: {
+          selectedKit: targetItem.kitName,
+          quantity: String(targetItem.quantity || 1),
+          serialNumber: targetItem.serialNumber || '',
+          editingIndex: idx
+        }
+      }));
+      toast.info(`Editing kit #${idx + 1}: ${targetItem.kitName}`);
+    }
+  };
+
+  const handleDeleteKit = (pKey, idx) => {
+    const targetItem = configuredKitsMap[pKey]?.[idx];
+    setConfiguredKitsMap((prev) => ({
+      ...prev,
+      [pKey]: (prev[pKey] || []).filter((_, i) => i !== idx)
+    }));
+    toast.error(`Kit "${targetItem?.kitName || 'item'}" removed.`);
+  };
+
+  const resetKitForm = (pKey) => {
+    const curForm = kitFormMap[pKey] || {};
+    setKitFormMap((prev) => ({
+      ...prev,
+      [pKey]: {
+        selectedKit: curForm.selectedKit || 'Sonoscape X5 Standard Transducer & Trolley Kit',
+        quantity: '1',
+        serialNumber: `KIT-SN-2026-${String(Math.floor(100 + Math.random() * 900))}`,
+        editingIndex: null
+      }
+    }));
+  };
+
   // Save Kit Details & Fulfilment Handler
   const handleSaveFulfilment = (e) => {
     if (e) e.preventDefault();
@@ -138,7 +280,7 @@ const KitGeneration = ({ pis = [], setPIs, leads = [], kits = initialMockKits })
             ? {
                 ...p,
                 kitFulfilmentData: {
-                  selectedKitsMap,
+                  configuredKitsMap,
                   productLicenses,
                   paymentStatus,
                   amountPaid: paidVal,
@@ -179,6 +321,16 @@ const KitGeneration = ({ pis = [], setPIs, leads = [], kits = initialMockKits })
           <span className="fw-bold text-dark d-block">{val}</span>
           <span className="small text-muted">{row.specifications}</span>
         </div>
+      )
+    },
+    {
+      key: 'serialNumber',
+      title: 'SERIAL NUMBER (SN)',
+      sortable: true,
+      render: (val, row, idx) => (
+        <span className="badge bg-light text-primary border font-monospace fw-bold">
+          {val || row.serialNumber || `SN-2026-${String(idx + 1).padStart(3, '0')}`}
+        </span>
       )
     },
     {
@@ -443,8 +595,26 @@ const KitGeneration = ({ pis = [], setPIs, leads = [], kits = initialMockKits })
             {initialLineItems.map((prodItem, pIdx) => {
               const pKey = prodItem.id || pIdx;
               const kitListSource = (kits && kits.length > 0) ? kits : initialMockKits;
-              const kitOptions = kitListSource.map((k) => k.kitName).filter(Boolean);
-              if (kitOptions.length === 0) kitOptions.push('Standard Medical Scanner Kit');
+
+              // Group kits by category from Kits Master for multi-section dropdown
+              const groupedKits = {};
+              kitListSource.forEach((k) => {
+                const cat = k.category || 'Ultrasound Transducers & Accessories';
+                if (!groupedKits[cat]) groupedKits[cat] = [];
+                groupedKits[cat].push(k);
+              });
+
+              const kitOptions = [];
+              Object.keys(groupedKits).forEach((catName) => {
+                kitOptions.push({ isHeader: true, label: ` ${catName.toUpperCase()} (KITS MASTER)` });
+                groupedKits[catName].forEach((k) => {
+                  kitOptions.push({
+                    label: k.kitName,
+                    value: k.kitName,
+                    subtext: `ID: ${k.kitId || 'KIT-001'} | ₹${Number(k.kitPrice || 45000).toLocaleString('en-IN')}`
+                  });
+                });
+              });
 
               const curLicense = productLicenses[pKey] || {
                 licenseRequired: 'Yes',
@@ -456,8 +626,6 @@ const KitGeneration = ({ pis = [], setPIs, leads = [], kits = initialMockKits })
                 licenseRemarks: 'Standard 1-Year software license key active.'
               };
 
-              const curSelectedKits = selectedKitsMap[pKey] || [];
-
               const handleLicenseChange = (field, val) => {
                 setProductLicenses((prev) => ({
                   ...prev,
@@ -465,13 +633,6 @@ const KitGeneration = ({ pis = [], setPIs, leads = [], kits = initialMockKits })
                     ...(prev[pKey] || {}),
                     [field]: val
                   }
-                }));
-              };
-
-              const handleKitsSelectionChange = (newKits) => {
-                setSelectedKitsMap((prev) => ({
-                  ...prev,
-                  [pKey]: newKits
                 }));
               };
 
@@ -572,39 +733,149 @@ const KitGeneration = ({ pis = [], setPIs, leads = [], kits = initialMockKits })
                     </div>
                   </div>
 
-                  {/* 2. SELECT KITS MULTISELECT DROPDOWN PER PRODUCT */}
-                  <div className="p-3 bg-light rounded border mb-4">
-                    <h6 className="fw-bold text-dark mb-2 small d-flex align-items-center gap-2">
-                      <Boxes size={16} color="#2E3192" />
-                      <span>Select Kits for {prodItem.productName} (MultiSelect)</span>
-                    </h6>
-                    <MultiSelect
-                      label={`Select Kits for Product `}
-                      options={kitOptions}
-                      value={curSelectedKits}
-                      onChange={(e) => handleKitsSelectionChange(e.target.value)}
-                      placeholder="Choose one or multiple kits..."
-                    />
-                  </div>
+                  
 
-                  {/* 3. CONFIGURED KITS & LICENSE SUMMARY FOR PRODUCT */}
-                  <div className="p-3 bg-white rounded border">
-                    <h6 className="fw-bold text-dark mb-2 small d-flex align-items-center gap-1">
-                      <CheckCircle2 size={16} className="text-success" />
-                      <span>Selected Kits & Product License Summary ({curSelectedKits.length} kit(s) selected)</span>
-                    </h6>
-                    <div className="d-flex flex-wrap gap-2 mt-2">
-                      {curSelectedKits.length === 0 ? (
-                        <span className="text-muted small fst-italic">No kits selected yet. Use the MultiSelect field above to choose kits for this product.</span>
-                      ) : (
-                        curSelectedKits.map((kName, kIdx) => (
-                          <span key={kIdx} className="badge bg-primary px-3 py-2 fs-6 font-monospace d-inline-flex align-items-center gap-1 shadow-sm" style={{ backgroundColor: '#2E3192' }}>
-                            <Boxes size={14} /> {kName}
-                          </span>
-                        ))
-                      )}
-                    </div>
-                  </div>
+                  {/* 2. ADD KIT SELECTION FORM CARD & CONFIGURED KITS TABLE VIEW */}
+                  {(() => {
+                    const curForm = kitFormMap[pKey] || {
+                      selectedKit: (kits || initialMockKits)[0]?.kitName || 'Sonoscape X5 Standard Transducer & Trolley Kit',
+                      quantity: '1',
+                      serialNumber: `KIT-SN-2026-${String(Math.floor(100 + Math.random() * 900))}`,
+                      editingIndex: null
+                    };
+                    const curKitsList = configuredKitsMap[pKey] || [];
+                    const kitMasterOptions = (kits && kits.length > 0 ? kits : initialMockKits).map((k) => k.kitName).filter(Boolean);
+
+                    return (
+                      <>
+                        <div className="p-3 bg-light rounded border mb-4">
+                          <div className="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+                            <div className="d-flex align-items-center gap-2">
+                              <Boxes size={18} color="#2E3192" />
+                              <h6 className="mb-0 fw-bold text-dark fs-6">
+                                {curForm.editingIndex !== null && curForm.editingIndex !== undefined
+                                  ? `Update Kit Item #${curForm.editingIndex + 1}`
+                                  : `Add Kit for ${prodItem.productName}`}
+                              </h6>
+                            </div>
+                            {curForm.editingIndex !== null && curForm.editingIndex !== undefined && (
+                              <button
+                                type="button"
+                                className="btn btn-sm btn-outline-secondary"
+                                onClick={() => resetKitForm(pKey)}
+                              >
+                                Cancel Edit
+                              </button>
+                            )}
+                          </div>
+
+                          <div className="row g-3 align-items-end">
+                            {/* SELECT KIT (SINGLE SELECT DROPDOWN FROM KITS MASTER) */}
+                            <div className="col-12 col-md-6">
+                              <Dropdown
+                                label="Select Kit (From Kits Master) *"
+                                options={kitMasterOptions}
+                                value={curForm.selectedKit}
+                                onChange={(e) => updateKitFormField(pKey, 'selectedKit', e.target.value)}
+                              />
+                            </div>
+
+                            {/* QUANTITY */}
+                            <div className="col-12 col-md-3">
+                              <InputField
+                                label="Quantity (Qty) *"
+                                type="number"
+                                min="1"
+                                value={curForm.quantity}
+                                onChange={(e) => updateKitFormField(pKey, 'quantity', e.target.value)}
+                              />
+                            </div>
+
+                            {/* SERIAL NUMBER */}
+                            <div className="col-12 col-md-3">
+                              <InputField
+                                label="Kit Serial Number (SN) *"
+                                value={curForm.serialNumber}
+                                onChange={(e) => updateKitFormField(pKey, 'serialNumber', e.target.value)}
+                                placeholder="e.g. KIT-SN-2026-001"
+                              />
+                            </div>
+
+                            {/* ADD KIT BUTTON */}
+                            <div className="col-12 d-flex justify-content-end mt-3">
+                              <button
+                                type="button"
+                                className="btn btn-primary px-4 fw-bold d-inline-flex align-items-center gap-1 shadow-sm"
+                                style={{ backgroundColor: '#2E3192', borderColor: '#2E3192' }}
+                                onClick={() => handleAddOrUpdateKit(pKey)}
+                              >
+                                {curForm.editingIndex !== null && curForm.editingIndex !== undefined ? (
+                                  <>
+                                    <Check size={18} />
+                                    <span>Update Kit</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Plus size={18} />
+                                    <span>Add Kit</span>
+                                  </>
+                                )}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* 3. CONFIGURED KITS TABLE VIEW (WITH EDIT & DELETE ACTIONS) */}
+                        <div className="mb-3">
+                          <div className="d-flex align-items-center gap-2 mb-2">
+                            <CheckCircle2 size={18} color="#2E3192" />
+                            <h6 className="fw-bold text-dark mb-0 fs-6">
+                              Configured Kits Table ({curKitsList.length})
+                            </h6>
+                          </div>
+
+                          <div className="category-table-wrapper border rounded bg-white">
+                              <Table
+                                columns={configuredKitColumns}
+                                data={curKitsList}
+                                showSerialNumber={true}
+                                serialNumberHeader="S.NO"
+                                actions={(row, idx) => (
+                                  <div className="category-actions-container">
+                                    <button
+                                      type="button"
+                                      className="category-action-btn edit-btn"
+                                      title="Edit Kit Item"
+                                      onClick={() => handleEditKit(pKey, idx)}
+                                    >
+                                      <Pencil size={15} color="#2E3192" />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      className="category-action-btn delete-btn"
+                                      title="Delete Kit Item"
+                                      onClick={() => handleDeleteKit(pKey, idx)}
+                                    >
+                                      <Trash2 size={15} color="#DC2626" />
+                                    </button>
+                                  </div>
+                                )}
+                                actionHeader="ACTIONS"
+                                actionWidth="100px"
+                                emptyMessage="No kits configured for this product yet. Select Kit above, enter Qty & Serial Number, then click 'Add Kit'."
+                                emptyIcon={<Boxes size={36} className="text-muted d-block mx-auto mb-2 opacity-50" />}
+                                paginated={false}
+                                tableClassName="category-custom-table"
+                                bordered={false}
+                                striped={false}
+                                hover={true}
+                                minWidth="650px"
+                              />
+                            </div>
+                          </div>
+                        </>
+                    );
+                  })()}
                 </div>
               );
             })}

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Button from '../../components/Button';
@@ -16,12 +16,12 @@ import {
   Plus,
   Trash2,
   Pencil,
-  CreditCard,
   Check,
   Tag,
   Eye,
   GitFork,
   CheckCircle2,
+   CreditCard,
   XCircle,
   Save,
   X,
@@ -38,6 +38,36 @@ const defaultCategories = [
   'General Healthcare Supplies'
 ];
 
+// Reusable Helper to find the latest version record for a given root PI number
+export const getLatestPIVersion = (rootPINumber, pisList = []) => {
+  if (!rootPINumber) return null;
+  const cleanRoot = rootPINumber.split('-V')[0];
+  const matchingRecords = (pisList || []).filter(
+    (p) => p.rootPINumber === cleanRoot || (p.piNumber && p.piNumber.split('-V')[0] === cleanRoot)
+  );
+
+  if (matchingRecords.length === 0) return null;
+
+  return matchingRecords.sort((a, b) => Number(b.versionNumber || 1) - Number(a.versionNumber || 1))[0];
+};
+
+// Reusable Helper to generate deterministic sequential PI numbers (e.g. PI-2026-001, PI-2026-002, etc.)
+export const getNextPINumber = (pisList = []) => {
+  if (!pisList || pisList.length === 0) return 'PI-2026-001';
+  const nums = pisList
+    .map((p) => {
+      const rootStr = p.rootPINumber || p.piNumber || '';
+      const baseStr = rootStr.split('-V')[0];
+      const match = baseStr.match(/\d+$/);
+      return match ? parseInt(match[0], 10) : null;
+    })
+    .filter((n) => n !== null && !isNaN(n));
+
+  const maxNum = nums.length > 0 ? Math.max(...nums) : 0;
+  const nextNum = maxNum + 1;
+  return `PI-2026-${String(nextNum).padStart(3, '0')}`;
+};
+
 const PIPage = ({
   leads = [],
   setLeads,
@@ -49,9 +79,6 @@ const PIPage = ({
   const navigate = useNavigate();
   const { id } = useParams();
   const location = useLocation();
-
-  // Determine if viewing main PI Register Table Page (/proforma-invoice) or PI Form Page (/leads/:id/pi)
-  const isRegisterPage = location.pathname === '/proforma-invoice';
 
   // Parse query string for mode or versionFrom
   const queryParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
@@ -113,36 +140,55 @@ const PIPage = ({
   }, [products]);
 
   // Main Form / PI Header State
-  const [piData, setPIData] = useState({
-    piNumber: targetPIRecord
-      ? queryMode === 'version'
-        ? `PI-2026-${String(Math.floor(1000 + Math.random() * 9000))}`
-        : targetPIRecord.piNumber
-      : `PI-2026-${String(Math.floor(1000 + Math.random() * 9000))}`,
-    piDate: targetPIRecord ? targetPIRecord.piDate || targetPIRecord.generatedDate : new Date().toISOString().split('T')[0],
-    versionNumber: targetPIRecord
-      ? queryMode === 'version'
-        ? Number(targetPIRecord.versionNumber || 1) + 1
-        : Number(targetPIRecord.versionNumber || 1)
-      : 1,
-    deliveryAddress: targetPIRecord ? targetPIRecord.deliveryAddress : lead ? lead.address || lead.hospitalInstitution || '' : '',
-    paymentTerms: targetPIRecord ? targetPIRecord.paymentTerms : '50% Advance with Purchase Order, 50% before Dispatch',
-    deliveryTerms: targetPIRecord ? targetPIRecord.deliveryTerms : '2 to 3 Weeks from receipt of confirmed Purchase Order',
-    termsConditions: targetPIRecord ? targetPIRecord.termsConditions : '1. Prices are inclusive of standard 1-year warranty.\n2. Installation & clinical training included.\n3. Taxes as applicable at time of dispatch.',
-    isSent: targetPIRecord ? Boolean(targetPIRecord.isSent || targetPIRecord.isSentToCustomer) : false,
-    approvalStatus: targetPIRecord ? targetPIRecord.approvalStatus || 'Auto-Approved' : 'Auto-Approved',
-    approvedByRole: targetPIRecord ? targetPIRecord.approvedByRole || 'Sales Manager' : 'Sales Manager',
-    approvedPersonName: targetPIRecord ? targetPIRecord.approvedPersonName || (lead ? lead.assignedEmployeeName || 'Rajesh Kumar' : 'Rajesh Kumar') : (lead ? lead.assignedEmployeeName || 'Rajesh Kumar' : 'Rajesh Kumar'),
-    approvedAt: targetPIRecord ? targetPIRecord.approvedAt || '' : '',
-    piStatus: targetPIRecord ? targetPIRecord.piStatus || 'Accepted' : 'Accepted',
-    serviceType: targetPIRecord ? targetPIRecord.serviceType || 'One Time + AMC' : 'One Time + AMC',
-    subscriptionType: targetPIRecord ? targetPIRecord.subscriptionType || 'Monthly' : 'Monthly',
-    pricing_model: targetPIRecord ? targetPIRecord.pricing_model || (targetPIRecord.serviceType === 'Subscription' ? 'subscription' : 'one_time') : 'one_time'
+  const [piData, setPIData] = useState(() => {
+    const isVersionMode = queryMode === 'version';
+    if (targetPIRecord) {
+      const rootBase = targetPIRecord.rootPINumber || (targetPIRecord.piNumber ? targetPIRecord.piNumber.split('-V')[0] : 'PI-2026-003');
+      const latestSavedPI = isVersionMode ? (getLatestPIVersion(rootBase, pis) || targetPIRecord) : targetPIRecord;
+      const verNum = isVersionMode ? Number(latestSavedPI.versionNumber || 1) + 1 : Number(targetPIRecord.versionNumber || 1);
+      return {
+        piNumber: isVersionMode ? `${rootBase}-V${verNum}` : targetPIRecord.piNumber,
+        piDate: isVersionMode ? new Date().toISOString().split('T')[0] : (targetPIRecord.piDate || targetPIRecord.generatedDate || new Date().toISOString().split('T')[0]),
+        versionNumber: verNum,
+        deliveryAddress: targetPIRecord.deliveryAddress || (lead ? lead.address || '' : ''),
+        paymentTerms: targetPIRecord.paymentTerms || '50% Advance with Purchase Order, 50% before Dispatch',
+        deliveryTerms: targetPIRecord.deliveryTerms || '2 to 3 Weeks from receipt of confirmed Purchase Order',
+        termsConditions: targetPIRecord.termsConditions || '1. Prices are inclusive of standard 1-year warranty.\n2. Installation & clinical training included.\n3. Taxes as applicable at time of dispatch.',
+        isSent: isVersionMode ? false : Boolean(targetPIRecord.isSent),
+        approvalStatus: targetPIRecord.approvalStatus || 'Auto-Approved',
+        approvedByRole: targetPIRecord.approvedByRole || 'Sales Manager',
+        approvedPersonName: targetPIRecord.approvedPersonName || (lead ? lead.assignedEmployeeName || 'Rajesh Kumar' : 'Rajesh Kumar'),
+        approvedAt: targetPIRecord.approvedAt || '',
+        piStatus: targetPIRecord.piStatus || 'Accepted',
+        serviceType: targetPIRecord.serviceType || 'One Time + AMC',
+        subscriptionType: targetPIRecord.subscriptionType || 'Monthly',
+        pricing_model: targetPIRecord.pricing_model || (targetPIRecord.serviceType === 'Subscription' ? 'subscription' : 'one_time')
+      };
+    }
+    return {
+      piNumber: getNextPINumber(pis),
+      piDate: new Date().toISOString().split('T')[0],
+      versionNumber: 1,
+      deliveryAddress: lead ? lead.address || lead.hospitalInstitution || '' : '',
+      paymentTerms: '50% Advance with Purchase Order, 50% before Dispatch',
+      deliveryTerms: '2 to 3 Weeks from receipt of confirmed Purchase Order',
+      termsConditions: '1. Prices are inclusive of standard 1-year warranty.\n2. Installation & clinical training included.\n3. Taxes as applicable at time of dispatch.',
+      isSent: false,
+      approvalStatus: 'Auto-Approved',
+      approvedByRole: 'Sales Manager',
+      approvedPersonName: lead ? lead.assignedEmployeeName || 'Rajesh Kumar' : 'Rajesh Kumar',
+      approvedAt: '',
+      piStatus: 'Accepted',
+      serviceType: 'One Time + AMC',
+      subscriptionType: 'Monthly',
+      pricing_model: 'one_time'
+    };
   });
 
   // Add Product Selector Form Inputs
   const [selectedCategory, setSelectedCategory] = useState('Medical & Diagnostic Scanners');
   const [selectedProductName, setSelectedProductName] = useState('');
+  const [serialNumberInput, setSerialNumberInput] = useState('SN-2026-001');
   const [qtyInput, setQtyInput] = useState('1');
   const [unitPriceInput, setUnitPriceInput] = useState('4500000');
   const [gstInput, setGstInput] = useState('18');
@@ -162,10 +208,21 @@ const PIPage = ({
     return (products || []).map((p) => p.productName);
   }, [products, selectedCategory]);
 
-  // Auto-set product name when category changes
+  // User Manual Change Tracking Refs (Prevents overwriting user inputs)
+  const isAddressTouchedRef = useRef(false);
+  const isApprovedPersonTouchedRef = useRef(false);
+
+  // Auto-set product name when category changes without overwriting user's valid selection
   useEffect(() => {
     if (filteredProducts.length > 0) {
-      setSelectedProductName(filteredProducts[0]);
+      if (selectedProductName && filteredProducts.includes(selectedProductName)) {
+        return;
+      }
+      if (lead?.product && filteredProducts.includes(lead.product)) {
+        setSelectedProductName(lead.product);
+      } else {
+        setSelectedProductName(filteredProducts[0]);
+      }
     } else {
       setSelectedProductName(lead ? lead.product || 'Sonocare Premium 4D Ultrasound Workstation' : '');
     }
@@ -208,7 +265,10 @@ const PIPage = ({
   // Initial Line Items setup
   const initialLineItems = useMemo(() => {
     if (targetPIRecord && targetPIRecord.lineItems && targetPIRecord.lineItems.length > 0) {
-      return JSON.parse(JSON.stringify(targetPIRecord.lineItems));
+      return JSON.parse(JSON.stringify(targetPIRecord.lineItems)).map((item, idx) => ({
+        ...item,
+        serialNumber: item.serialNumber || `SN-2026-${String(idx + 1).padStart(3, '0')}`
+      }));
     }
     if (lead) {
       const unitPrice = Number(lead.budget) || 4500000;
@@ -219,6 +279,7 @@ const PIPage = ({
           id: 1,
           category: lead.productCategory || 'Medical & Diagnostic Scanners',
           productName: lead.product || 'Sonocare Premium 4D Ultrasound Workstation',
+          serialNumber: 'SN-2026-001',
           quantity: 1,
           unitPrice: unitPrice,
           gstPercent: initialGst,
@@ -238,34 +299,71 @@ const PIPage = ({
     }
   }, [initialLineItems]);
 
+
+
   // Sync piData when targetPIRecord or queryMode changes
   useEffect(() => {
     if (targetPIRecord) {
       const isVersionMode = queryMode === 'version';
-      const verNum = isVersionMode ? Number(targetPIRecord.versionNumber || 1) + 1 : Number(targetPIRecord.versionNumber || 1);
       const rootBase = targetPIRecord.rootPINumber || (targetPIRecord.piNumber ? targetPIRecord.piNumber.split('-V')[0] : 'PI-2026-003');
+
+      // Always query the latest saved PI record for this root PI chain
+      const latestSavedPI = isVersionMode ? (getLatestPIVersion(rootBase, pis) || targetPIRecord) : targetPIRecord;
+      const verNum = isVersionMode ? Number(latestSavedPI.versionNumber || 1) + 1 : Number(targetPIRecord.versionNumber || 1);
 
       setPIData({
         piNumber: isVersionMode ? `${rootBase}-V${verNum}` : targetPIRecord.piNumber,
-        piDate: new Date().toISOString().split('T')[0],
+        // When creating a new version, set date to today while keeping historical version's date unchanged
+        piDate: isVersionMode ? new Date().toISOString().split('T')[0] : (targetPIRecord.piDate || targetPIRecord.generatedDate || new Date().toISOString().split('T')[0]),
         versionNumber: verNum,
-        deliveryAddress: targetPIRecord.deliveryAddress || (lead ? lead.address || '' : ''),
-        paymentTerms: targetPIRecord.paymentTerms || '50% Advance with Purchase Order, 50% before Dispatch',
-        deliveryTerms: targetPIRecord.deliveryTerms || '2 to 3 Weeks from receipt of confirmed Purchase Order',
-        termsConditions: targetPIRecord.termsConditions || '1. Prices are inclusive of standard 1-year warranty.',
+        deliveryAddress: latestSavedPI.deliveryAddress || (lead ? lead.address || '' : ''),
+        paymentTerms: latestSavedPI.paymentTerms || '50% Advance with Purchase Order, 50% before Dispatch',
+        deliveryTerms: latestSavedPI.deliveryTerms || '2 to 3 Weeks from receipt of confirmed Purchase Order',
+        termsConditions: latestSavedPI.termsConditions || '1. Prices are inclusive of standard 1-year warranty.',
         isSent: isVersionMode ? false : Boolean(targetPIRecord.isSent),
-        approvalStatus: targetPIRecord.approvalStatus || 'Auto-Approved',
-        approvedByRole: targetPIRecord.approvedByRole || 'Sales Manager',
-        approvedPersonName: targetPIRecord.approvedPersonName || (lead ? lead.assignedEmployeeName || 'Rajesh Kumar' : 'Rajesh Kumar'),
-        approvedAt: targetPIRecord.approvedAt || '',
-        piStatus: targetPIRecord.piStatus || 'Accepted',
-        serviceType: targetPIRecord.serviceType || 'One Time + AMC',
-        subscriptionType: targetPIRecord.subscriptionType || 'Monthly',
-        pricing_model: targetPIRecord.pricing_model || (targetPIRecord.serviceType === 'Subscription' ? 'subscription' : 'one_time')
+        approvalStatus: latestSavedPI.approvalStatus || 'Auto-Approved',
+        approvedByRole: latestSavedPI.approvedByRole || 'Sales Manager',
+        approvedPersonName: latestSavedPI.approvedPersonName || (lead ? lead.assignedEmployeeName || 'Rajesh Kumar' : 'Rajesh Kumar'),
+        approvedAt: isVersionMode ? '' : (latestSavedPI.approvedAt || ''),
+        piStatus: latestSavedPI.piStatus || 'Accepted',
+        serviceType: latestSavedPI.serviceType || 'One Time + AMC',
+        subscriptionType: latestSavedPI.subscriptionType || 'Monthly',
+        pricing_model: latestSavedPI.pricing_model || (latestSavedPI.serviceType === 'Subscription' ? 'subscription' : 'one_time')
       });
-      setLineItems(JSON.parse(JSON.stringify(targetPIRecord.lineItems || [])));
+
+      const sourceItems = latestSavedPI.lineItems && latestSavedPI.lineItems.length > 0 ? latestSavedPI.lineItems : (targetPIRecord.lineItems || []);
+      setLineItems(JSON.parse(JSON.stringify(sourceItems)));
     }
-  }, [targetPIRecord, queryMode, lead]);
+  }, [targetPIRecord, queryMode, lead, pis]);
+
+  // Auto-populate missing Lead fields for NEW PIs without overwriting user manual changes
+  useEffect(() => {
+    if (!targetPIRecord && lead) {
+      setPIData((prev) => {
+        const leadAddr = lead.address || lead.hospitalInstitution || '';
+        const leadEmp = lead.assignedEmployeeName || 'Rajesh Kumar';
+
+        let newAddress = prev.deliveryAddress;
+        if (!isAddressTouchedRef.current && (!prev.deliveryAddress || prev.deliveryAddress === '')) {
+          newAddress = leadAddr;
+        }
+
+        let newEmp = prev.approvedPersonName;
+        if (!isApprovedPersonTouchedRef.current && (!prev.approvedPersonName || prev.approvedPersonName === 'Rajesh Kumar')) {
+          newEmp = leadEmp;
+        }
+
+        if (newAddress !== prev.deliveryAddress || newEmp !== prev.approvedPersonName) {
+          return {
+            ...prev,
+            deliveryAddress: newAddress,
+            approvedPersonName: newEmp
+          };
+        }
+        return prev;
+      });
+    }
+  }, [lead, targetPIRecord]);
 
   // Determine Inter-state vs Intra-state Tax (Company State: Tamil Nadu)
   const customerTerritory = (lead ? lead.territory || lead.state || '' : '') || (targetPIRecord ? targetPIRecord.territory || '' : '') || 'Tamil Nadu';
@@ -315,6 +413,8 @@ const PIPage = ({
     };
   }, [lineItems, isInterState]);
 
+
+
   // Determine Approval Requirement from Total Order Value automatically
   const approvalGate = useMemo(() => {
     if (totalOrderValue < 5000000) {
@@ -362,6 +462,7 @@ const PIPage = ({
       id: editingProductIndex !== null ? lineItems[editingProductIndex]?.id || Date.now() : Date.now(),
       category: pCat,
       productName: pName,
+      serialNumber: serialNumberInput || `SN-2026-${String(lineItems.length + 1).padStart(3, '0')}`,
       quantity: qty,
       unitPrice: price,
       gstPercent: gstP,
@@ -387,6 +488,7 @@ const PIPage = ({
     if (item) {
       setSelectedCategory(item.category || 'Medical & Diagnostic Scanners');
       setSelectedProductName(item.productName || '');
+      setSerialNumberInput(item.serialNumber || `SN-2026-${String(index + 1).padStart(3, '0')}`);
       setQtyInput(String(item.quantity || 1));
       setUnitPriceInput(String(item.unitPrice || 0));
       setGstInput(String(item.gstPercent || 18));
@@ -425,12 +527,17 @@ const PIPage = ({
       return;
     }
 
+    if (!lineItems || lineItems.length === 0) {
+      toast.error('Please add at least one product before saving the Proforma Invoice.');
+      return;
+    }
+
     const isVersionMode = queryMode === 'version';
-    const rootBase = targetPIRecord ? (targetPIRecord.rootPINumber || targetPIRecord.piNumber.split('-V')[0]) : piData.piNumber.split('-V')[0];
+    const rootBase = targetPIRecord ? (targetPIRecord.rootPINumber || targetPIRecord.piNumber.split('-V')[0]) : (piData.piNumber ? piData.piNumber.split('-V')[0] : getNextPINumber(pis));
     const versionNum = piData.versionNumber || 1;
     const finalPINumber = isVersionMode
       ? `${rootBase}-V${versionNum}`
-      : (targetPIRecord ? targetPIRecord.piNumber : `${rootBase}-V${versionNum}`);
+      : (targetPIRecord ? targetPIRecord.piNumber : rootBase);
 
     const newPIRecord = {
       id: isVersionMode || !targetPIRecord ? Date.now() : targetPIRecord.id,
@@ -602,6 +709,16 @@ const PIPage = ({
         render: (val) => <span className="fw-bold text-dark">{val}</span>
       },
       {
+        key: 'serialNumber',
+        title: 'SERIAL NUMBER ',
+        sortable: true,
+        render: (val, row, idx) => (
+          <span className="badge bg-light text-primary border font-monospace fw-bold">
+            {val || `SN-2026-${String(idx + 1).padStart(3, '0')}`}
+          </span>
+        )
+      },
+      {
         key: 'quantity',
         title: isSubscription ? 'NO. OF CYCLES' : 'QTY',
         sortable: true,
@@ -684,11 +801,11 @@ const PIPage = ({
             title="Back to Proforma Invoice Register"
           >
             <ArrowLeft size={18} className="me-1" />
-            <span className="d-none d-sm-inline">Back to PI Menu</span>
+
           </button>
           <FileText size={28} style={{ color: '#2E3192' }} />
           <div>
-            <h1 className="category-page-title mb-0">Proforma Invoice (PI) & Commercial Management</h1>
+            <h1 className="category-page-title mb-0">Proforma Invoice </h1>
             <span className="small text-muted">
               {lead ? `${lead.customerName} (${lead.leadId})` : 'PI Details'} | Linked Enquiry: <strong className="text-dark font-monospace">{enquiryId}</strong>
             </span>
@@ -823,7 +940,10 @@ const PIPage = ({
                 placeholder="Enter delivery site address if different..."
                 value={piData.deliveryAddress}
                 disabled={queryMode === 'view'}
-                onChange={(e) => setPIData((prev) => ({ ...prev, deliveryAddress: e.target.value }))}
+                onChange={(e) => {
+                  isAddressTouchedRef.current = true;
+                  setPIData((prev) => ({ ...prev, deliveryAddress: e.target.value }));
+                }}
               />
             </div>
           </div>
@@ -845,12 +965,12 @@ const PIPage = ({
         </div>
         <div className="card-body p-3 p-md-4">
 
-          {/* PI LEVEL SERVICE TYPE & SUBSCRIPTION TYPE SELECTION */}
+          {/* PI LEVEL SERVICE TYPE & SUBSCRIPTION / PAYMENT TYPE SELECTION */}
           <div className="p-3 mb-4 rounded border bg-white shadow-sm">
             <div className="row g-3 align-items-center">
               <div className="col-12 col-md-6">
                 <Dropdown
-                  label="Service Type (Deal Pricing Model) "
+                  label="Service Type "
                   options={['One Time + AMC', 'Subscription']}
                   value={piData.serviceType || 'One Time + AMC'}
                   disabled={queryMode === 'view'}
@@ -868,7 +988,7 @@ const PIPage = ({
               {piData.serviceType === 'Subscription' && (
                 <div className="col-12 col-md-6">
                   <Dropdown
-                    label="Subscription Type (Billing Frequency) *"
+                    label="Subscription Type"
                     options={['Monthly', 'Quarterly', 'Half Yearly', 'Yearly']}
                     value={piData.subscriptionType || 'Monthly'}
                     disabled={queryMode === 'view'}
@@ -906,7 +1026,7 @@ const PIPage = ({
                 {/* ROW 1: CATEGORY & PRODUCT NAME (2 COLUMNS IN DESKTOP) */}
                 <div className="col-12 col-md-6">
                   <Dropdown
-                    label="Product Category *"
+                    label="Product Category "
                     options={categoryOptions}
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
@@ -921,7 +1041,15 @@ const PIPage = ({
                   />
                 </div>
 
-                {/* ROW 2: QTY / CYCLES & UNIT / CYCLE PRICE (2 COLUMNS IN DESKTOP) */}
+                {/* ROW 2: SERIAL NUMBER & QTY / CYCLES (2 COLUMNS IN DESKTOP) */}
+                <div className="col-12 col-md-6">
+                  <InputField
+                    label="Equipment Serial Number "
+                    value={serialNumberInput}
+                    onChange={(e) => setSerialNumberInput(e.target.value)}
+                    placeholder="Enter Serial Number (e.g. SN-2026-001)"
+                  />
+                </div>
                 <div className="col-12 col-md-6">
                   <InputField
                     label={piData.serviceType === 'Subscription' ? 'Number of Cycles (Upfront Cycles Billed) *' : 'Quantity (Qty) *'}
@@ -943,7 +1071,7 @@ const PIPage = ({
                 {/* ROW 3: GST (%) & DISCOUNT AMOUNT (₹) (2 COLUMNS IN DESKTOP) */}
                 <div className="col-12 col-md-6">
                   <InputField
-                    label="GST Rate (%) (From Product Master)"
+                    label="GST Rate (%) "
                     type="number"
                     value={gstInput}
                     onChange={(e) => setGstInput(e.target.value)}
@@ -1024,7 +1152,7 @@ const PIPage = ({
           </div>
 
           {/* SINGLE HORIZONTAL ROW TOTALS BREAKDOWN (SUBTOTAL, DISCOUNT, CGST/SGST vs IGST, TOTAL VALUE) */}
-          <div className="p-3 bg-light rounded border">
+          <div className="p-3 bg-light rounded border mb-3">
             <div className="row g-2 align-items-center text-center text-md-start">
               <div className="col-12 col-sm-6 col-md-2 border-end-md">
                 <span className="small text-muted fw-semibold d-block">Subtotal:</span>
@@ -1037,17 +1165,17 @@ const PIPage = ({
 
               {isInterStateTax ? (
                 <div className="col-12 col-sm-6 col-md-3 border-end-md">
-                  <span className="small text-muted fw-semibold d-block">IGST (Inter-state):</span>
+                  <span className="small text-muted fw-semibold d-block">IGST :</span>
                   <span className="fw-bold font-monospace fs-6 text-dark">₹{taxIGST.toLocaleString()}</span>
                 </div>
               ) : (
                 <>
                   <div className="col-12 col-sm-6 col-md-2 border-end-md">
-                    <span className="small text-muted fw-semibold d-block">CGST (Intra-state):</span>
+                    <span className="small text-muted fw-semibold d-block">CGST :</span>
                     <span className="fw-bold font-monospace fs-6 text-dark">₹{taxCGST.toLocaleString()}</span>
                   </div>
                   <div className="col-12 col-sm-6 col-md-2 border-end-md">
-                    <span className="small text-muted fw-semibold d-block">SGST (Intra-state):</span>
+                    <span className="small text-muted fw-semibold d-block">SGST :</span>
                     <span className="fw-bold font-monospace fs-6 text-dark">₹{taxSGST.toLocaleString()}</span>
                   </div>
                 </>
@@ -1074,6 +1202,8 @@ const PIPage = ({
               </div>
             </div>
           </div>
+
+
         </div>
       </div>
 
@@ -1211,7 +1341,7 @@ const PIPage = ({
               className="px-4 fw-bold"
               onClick={() => navigate('/proforma-invoice')}
             >
-              <X size={18} className="me-1" /> Cancel
+             Back
             </Button>
           </div>
         </div>

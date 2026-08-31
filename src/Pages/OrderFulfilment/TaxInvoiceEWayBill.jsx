@@ -146,6 +146,16 @@ const TaxInvoiceEWayBill = ({ pis = [], setPIs, leads = [] }) => {
   const totalTax = totalCGST + totalSGST;
   const grandTotal = totalTaxable + totalTax;
 
+  // Calculate real-time Total Paid Amount & Outstanding Balance from Transaction History Log
+  const totalPaidAmount = useMemo(() => {
+    if (targetPI && targetPI.transactions && targetPI.transactions.length > 0) {
+      return targetPI.transactions.reduce((sum, t) => sum + Number(t.paidAmount || 0), 0);
+    }
+    return Number(targetPI?.paidAmount || invoiceData.paidAmount || 5000000);
+  }, [targetPI, invoiceData.paidAmount]);
+
+  const outstandingBalance = Math.max(0, grandTotal - totalPaidAmount);
+
   // Toggle Lock Handler
   const handleToggleLock = () => {
     if (isLocked) {
@@ -201,6 +211,16 @@ const TaxInvoiceEWayBill = ({ pis = [], setPIs, leads = [] }) => {
             </span>
           </div>
         </div>
+      )
+    },
+    {
+      key: 'serialNumber',
+      title: 'SERIAL NUMBER (SN)',
+      sortable: true,
+      render: (val, row, idx) => (
+        <span className="badge bg-light text-primary border font-monospace fw-bold">
+          {val || row.serialNumber || `SN-2026-${String(idx + 1).padStart(3, '0')}`}
+        </span>
       )
     },
     {
@@ -616,20 +636,28 @@ const TaxInvoiceEWayBill = ({ pis = [], setPIs, leads = [] }) => {
               <div className="col-12 col-md-4">
                 <div className="p-3 border rounded bg-light">
                   <span className="small text-muted d-block">Amount Received</span>
-                  <span className="fs-5 fw-bold text-success font-monospace">₹{Number(invoiceData.paidAmount).toLocaleString()}</span>
+                  <span className="fs-5 fw-bold text-success font-monospace">₹{totalPaidAmount.toLocaleString()}</span>
                 </div>
               </div>
               <div className="col-12 col-md-4">
                 <div className="p-3 border rounded bg-light">
                   <span className="small text-muted d-block">Outstanding Balance</span>
-                  <span className="fs-5 fw-bold text-danger font-monospace">₹{Math.max(0, grandTotal - Number(invoiceData.paidAmount)).toLocaleString()}</span>
+                  <span className="fs-5 fw-bold text-danger font-monospace">₹{outstandingBalance.toLocaleString()}</span>
                 </div>
               </div>
             </div>
 
             {/* ACTION TOOLBAR BUTTONS */}
             <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-3 border-top">
-              
+              <button
+                type="button"
+                className="btn btn-outline-secondary px-3 py-2 fw-semibold d-inline-flex align-items-center gap-1"
+                onClick={() => navigate(`/proforma-invoice/${encodeURIComponent(targetPI?.piNumber || 'PI-2026-003')}/payments`)}
+                title="Open Transaction History & Payment Tracking Page"
+              >
+                <CreditCard size={16} />
+                <span>View Transaction History Log</span>
+              </button>
 
               <div className="d-flex align-items-center gap-2 flex-wrap">
                 <button

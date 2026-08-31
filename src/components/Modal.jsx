@@ -59,10 +59,10 @@ export const ModalFooter = ({ children, className = '' }) => {
  * - Compound subcomponent usage: <Modal.Header>, <Modal.Title>, <Modal.Body>, <Modal.Footer>
  */
 export const Modal = ({
-  show = false,
-  isOpen, // Alias for show
+  show,
+  isOpen,
   onHide,
-  onClose, // Alias for onHide
+  onClose,
   title,
   children,
   footer,
@@ -77,7 +77,7 @@ export const Modal = ({
   footerClassName = '',
   className = ''
 }) => {
-  const isVisible = show !== undefined ? show : isOpen;
+  const isVisible = Boolean(show || isOpen);
   const handleClose = onHide || onClose;
 
   // Handle ESC Key Press

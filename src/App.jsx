@@ -10,6 +10,7 @@ import AddEmployee from './Pages/Masters/AddEmployee';
 import EditEmployee from './Pages/Masters/EditEmployee';
 import ViewEmployee from './Pages/Masters/ViewEmployee';
 import Territory from './Pages/Masters/Territory';
+import CityMaster from './Pages/Masters/CityMaster';
 import Source from './Pages/Masters/Source';
 import Campaign from './Pages/Masters/Campaign';
 import CampaignContacts from './Pages/Masters/CampaignContacts';
@@ -25,6 +26,7 @@ import KitList from './Pages/Masters/KitList';
 import AddKit from './Pages/Masters/AddKit';
 import EditKit from './Pages/Masters/EditKit';
 import ViewKit from './Pages/Masters/ViewKit';
+import PartMaster from './Pages/Masters/PartMaster';
 import CustomerList from './Pages/Masters/CustomerList';
 import AddCustomer from './Pages/Masters/AddCustomer';
 import EditCustomer from './Pages/Masters/EditCustomer';
@@ -47,8 +49,45 @@ import KitGeneration from './Pages/OrderFulfilment/KitGeneration';
 import TaxInvoiceEWayBill from './Pages/OrderFulfilment/TaxInvoiceEWayBill';
 import InstallationTaskAssignment from './Pages/OrderFulfilment/InstallationTaskAssignment';
 import TransactionHistory from './Pages/OrderFulfilment/TransactionHistory';
+import OrderCancellation from './Pages/OrderFulfilment/OrderCancellation';
+import ViewCancellation from './Pages/OrderFulfilment/ViewCancellation';
+import EditCancellation from './Pages/OrderFulfilment/EditCancellation';
+import TicketManagement from './Pages/Service/TicketManagement';
+import AddTicket from './Pages/Service/AddTicket';
+import ViewTicket from './Pages/Service/ViewTicket';
+import EditTicket from './Pages/Service/EditTicket';
+import TicketServiceOperations from './Pages/Service/TicketServiceOperations';
+import AssignTicket from './Pages/Service/AssignTicket';
+import TechnicalEscalation from './Pages/Service/TechnicalEscalation';
+import Dashboard from './Pages/Dashboard';
+import WaitingForCustomerOrParts from './Pages/Service/WaitingForCustomerOrParts';
+import CampaignReport from './Pages/Reports/CampaignReport';
+import LeadReport from './Pages/Reports/LeadReport';
+import SalesReport from './Pages/Reports/SalesReport';
+import AMCReport from './Pages/Reports/AMCReport';
+import SubscriptionReport from './Pages/Reports/SubscriptionReport';
+import TicketReport from './Pages/Reports/TicketReport';
+import AccessPrivilege from './Pages/Settings/AccessPrivilege';
+import AMCManagement from './Pages/AMC/AMCManagement';
+import EditAMCContract from './Pages/AMC/EditAMCContract';
+import ViewAMCContract from './Pages/AMC/ViewAMCContract';
+import AMCRenewal from './Pages/AMC/AMCRenewal';
+import AMCRenewalPI from './Pages/AMC/AMCRenewalPI';
+import AMCRenewalInvoice from './Pages/AMC/AMCRenewalInvoice';
+import SubscriptionManagement from './Pages/Subscription/SubscriptionManagement';
+import ViewSubscription from './Pages/Subscription/ViewSubscription';
+import EditSubscription from './Pages/Subscription/EditSubscription';
+import SubscriptionRenewal from './Pages/Subscription/SubscriptionRenewal';
+import SubscriptionRenewalPI from './Pages/Subscription/SubscriptionRenewalPI';
+import SubscriptionRenewalInvoice from './Pages/Subscription/SubscriptionRenewalInvoice';
+import InventoryManagement from './Pages/Masters/InventoryManagement';
+import AddInventory from './Pages/Masters/AddInventory';
+import EditInventory from './Pages/Masters/EditInventory';
+import ViewInventory from './Pages/Masters/ViewInventory';
+import { initialMockInventory } from './Pages/Masters/mockInventory';
 import { initialMockProducts } from './Pages/Masters/mockProducts';
 import { initialMockKits } from './Pages/Masters/mockKits';
+import { initialMockParts } from './Pages/Masters/mockParts';
 import { initialMockCustomers } from './Pages/Masters/mockCustomers';
 import { initialMockEmployees } from './Pages/Masters/mockEmployees';
 import { initialMockEnquiries } from './Pages/Masters/mockEnquiry';
@@ -62,17 +101,12 @@ import {
 import { toast } from './components/Toast';
 import './App.css';
 
-/**
- * Root Application Component with React Router URL Navigation
- * - /login -> Login Page
- * - /our-stock/master/general-categories (add, edit/:id, view/:id) -> Category Master Pages
- * - /our-stock/master/products (add, edit/:id, view/:id) -> Product Master Pages
- * - /masters/kits (add, :id/view, :id/edit) -> Kit Master Pages
- */
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [inventory, setInventory] = useState(initialMockInventory);
   const [products, setProducts] = useState(initialMockProducts);
   const [kits, setKits] = useState(initialMockKits);
+  const [parts, setParts] = useState(initialMockParts);
   const [customers, setCustomers] = useState(initialMockCustomers);
   const [employees, setEmployees] = useState(initialMockEmployees);
   const [enquiries, setEnquiries] = useState(initialMockEnquiries);
@@ -153,8 +187,46 @@ function App() {
           currentUser={{ name: 'Admin User', role: 'MEDIALOGIC Executive' }}
         >
           <Routes>
-            {/* Default root redirect */}
-            <Route path="/" element={<Navigate to="/our-stock/master/general-categories" replace />} />
+            {/* Default Dashboard Routes */}
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+
+            {/* Inventory Master Register Routes */}
+            <Route
+              path="/inventory"
+              element={<InventoryManagement inventory={inventory} setInventory={setInventory} />}
+            />
+            <Route
+              path="/inventory/add"
+              element={
+                <AddInventory
+                  inventory={inventory}
+                  setInventory={setInventory}
+                  products={products}
+                  kits={kits}
+                />
+              }
+            />
+            <Route
+              path="/inventory/edit/:id"
+              element={
+                <EditInventory
+                  inventory={inventory}
+                  setInventory={setInventory}
+                  products={products}
+                  kits={kits}
+                />
+              }
+            />
+            <Route
+              path="/inventory/view/:id"
+              element={
+                <ViewInventory
+                  inventory={inventory}
+                  setInventory={setInventory}
+                />
+              }
+            />
 
             {/* Category Master Routes */}
             <Route path="/our-stock/master/general-categories" element={<Category />} />
@@ -192,6 +264,10 @@ function App() {
 
             {/* Territory Master Route */}
             <Route path="/our-stock/master/territory" element={<Territory />} />
+
+            {/* City Master Routes */}
+            <Route path="/our-stock/master/city" element={<CityMaster />} />
+            <Route path="/masters/cities" element={<CityMaster />} />
 
             {/* Source Master Route */}
             <Route path="/our-stock/master/source" element={<Source />} />
@@ -339,6 +415,26 @@ function App() {
               }
             />
             <Route
+              path="/proforma-invoice/:id/payments"
+              element={
+                <TransactionHistory
+                  pis={pis}
+                  setPIs={setPIs}
+                  leads={leads}
+                />
+              }
+            />
+            <Route
+              path="/proforma-invoice/payments"
+              element={
+                <TransactionHistory
+                  pis={pis}
+                  setPIs={setPIs}
+                  leads={leads}
+                />
+              }
+            />
+            <Route
               path="/order-fulfilment"
               element={
                 <OrderFulfilment
@@ -398,6 +494,131 @@ function App() {
                   leads={leads}
                 />
               }
+            />
+            <Route
+              path="/order-cancellation"
+              element={<OrderCancellation pis={pis} leads={leads} />}
+            />
+            <Route
+              path="/order-cancellation/:id/view"
+              element={<ViewCancellation pis={pis} leads={leads} />}
+            />
+            <Route
+              path="/order-cancellation/:id/edit"
+              element={<EditCancellation pis={pis} leads={leads} />}
+            />
+            <Route
+              path="/service/tickets"
+              element={<TicketManagement pis={pis} leads={leads} />}
+            />
+            <Route
+              path="/service/tickets/add"
+              element={<AddTicket pis={pis} leads={leads} />}
+            />
+            <Route
+              path="/service/tickets/:id/view"
+              element={<ViewTicket pis={pis} leads={leads} />}
+            />
+            <Route
+              path="/service/tickets/:id/edit"
+              element={<EditTicket pis={pis} leads={leads} />}
+            />
+            <Route
+              path="/service/operations"
+              element={<TicketServiceOperations pis={pis} leads={leads} />}
+            />
+            <Route
+              path="/service/operations/:id/assign"
+              element={<AssignTicket pis={pis} leads={leads} />}
+            />
+            <Route
+              path="/service/operations/:id/escalate"
+              element={<TechnicalEscalation pis={pis} leads={leads} />}
+            />
+            <Route
+              path="/service/operations/:id/waiting"
+              element={<WaitingForCustomerOrParts pis={pis} leads={leads} />}
+            />
+            <Route
+              path="/reports/campaign"
+              element={<CampaignReport pis={pis} leads={leads} />}
+            />
+            <Route
+              path="/reports/lead"
+              element={<LeadReport pis={pis} leads={leads} />}
+            />
+            <Route
+              path="/reports/sales"
+              element={<SalesReport />}
+            />
+            <Route
+              path="/reports/amc"
+              element={<AMCReport pis={pis} leads={leads} />}
+            />
+            <Route
+              path="/reports/subscription"
+              element={<SubscriptionReport />}
+            />
+            <Route
+              path="/reports/tickets"
+              element={<TicketReport />}
+            />
+            <Route
+              path="/settings/access-privilege"
+              element={<AccessPrivilege />}
+            />
+            <Route
+              path="/warranty-amc"
+              element={
+                <AMCManagement
+                  pis={pis}
+                  leads={leads}
+                />
+              }
+            />
+            <Route
+              path="/warranty-amc/renewal"
+              element={<AMCRenewal pis={pis} leads={leads} />}
+            />
+            <Route
+              path="/warranty-amc/renewal/:id/pi"
+              element={<AMCRenewalPI pis={pis} leads={leads} />}
+            />
+            <Route
+              path="/warranty-amc/renewal/:id/invoice"
+              element={<AMCRenewalInvoice pis={pis} leads={leads} />}
+            />
+            <Route
+              path="/warranty-amc/:id/edit"
+              element={<EditAMCContract pis={pis} leads={leads} />}
+            />
+            <Route
+              path="/warranty-amc/:id/view"
+              element={<ViewAMCContract pis={pis} leads={leads} />}
+            />
+            <Route
+              path="/subscription"
+              element={<SubscriptionManagement pis={pis} leads={leads} />}
+            />
+            <Route
+              path="/subscription/renewal"
+              element={<SubscriptionRenewal pis={pis} leads={leads} />}
+            />
+            <Route
+              path="/subscription/renewal/:id/pi"
+              element={<SubscriptionRenewalPI pis={pis} leads={leads} />}
+            />
+            <Route
+              path="/subscription/renewal/:id/invoice"
+              element={<SubscriptionRenewalInvoice pis={pis} leads={leads} />}
+            />
+            <Route
+              path="/subscription/:id/view"
+              element={<ViewSubscription pis={pis} leads={leads} />}
+            />
+            <Route
+              path="/subscription/:id/edit"
+              element={<EditSubscription pis={pis} leads={leads} />}
             />
             <Route
               path="/leads/:id/pi"
@@ -604,6 +825,26 @@ function App() {
                 <ViewKit
                   kits={kits}
                   products={products}
+                />
+              }
+            />
+
+            {/* Part Master Routes */}
+            <Route
+              path="/masters/parts"
+              element={
+                <PartMaster
+                  parts={parts}
+                  setParts={setParts}
+                />
+              }
+            />
+            <Route
+              path="/our-stock/master/parts"
+              element={
+                <PartMaster
+                  parts={parts}
+                  setParts={setParts}
                 />
               }
             />

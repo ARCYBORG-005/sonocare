@@ -414,8 +414,17 @@ export const MultiSelect = forwardRef(({
               <div className="text-muted small p-2 text-center">No options found</div>
             ) : (
               filteredOptions.map((opt, idx) => {
+                if (typeof opt === 'object' && opt.isHeader) {
+                  return (
+                    <div key={`header-${idx}`} className="px-3 py-1 bg-light text-primary fw-bold small border-top border-bottom">
+                      {opt.label}
+                    </div>
+                  );
+                }
+
                 const optVal = typeof opt === 'object' ? opt.value : opt;
                 const optLabel = typeof opt === 'object' ? opt.label : opt;
+                const optSub = typeof opt === 'object' ? opt.subtext : null;
                 const isSelected = selectedValues.includes(optVal);
 
                 return (
@@ -424,7 +433,10 @@ export const MultiSelect = forwardRef(({
                     className={`sonocare-multiselect-option ${isSelected ? 'selected' : ''}`}
                     onClick={() => toggleOption(optVal)}
                   >
-                    <span>{optLabel}</span>
+                    <div>
+                      <span className="d-block">{optLabel}</span>
+                      {optSub && <small className="text-muted font-monospace">{optSub}</small>}
+                    </div>
                     {isSelected && <i className="bi bi-check2"></i>}
                   </div>
                 );

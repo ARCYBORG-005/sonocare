@@ -1,0 +1,80 @@
+/* SubscriptionManagement.css — Derived from AMCManagement.css for identical design harmony */
+
+.subscription-management-page {
+  font-family: inherit;
+}
+
+/* Header styling matching AMC Management */
+.subscription-header-icon {
+  color: #2E3192;
+}
+
+/* Badges for Subscription Types */
+.sub-type-monthly {
+  background-color: #e3f2fd;
+  color: #0d47a1;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  border: 1px solid #bbdefb;
+}
+
+.sub-type-half-yearly {
+  background-color: #f3e5f5;
+  color: #4a148c;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  border: 1px solid #e1bee7;
+}
+
+.sub-type-yearly {
+  background-color: #e8f5e9;
+  color: #1b5e20;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  border: 1px solid #c8e6c9;
+}
+
+/* Status Badges */
+.sub-status-active {
+  background-color: #d4edda;
+  color: #155724;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+.sub-status-pending {
+  background-color: #fff3cd;
+  color: #856404;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+.sub-status-lapsed {
+  background-color: #f8d7da;
+  color: #721c24;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+.sub-id-text {
+  font-family: monospace;
+  font-weight: 700;
+  color: #2E3192;
+}
+
+.sub-client-name {
+  font-weight: 600;
+  color: #212529;
+}
